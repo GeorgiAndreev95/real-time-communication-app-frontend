@@ -1,10 +1,11 @@
 import { Routes, Route } from "react-router";
+import Login from "./components/Login/Login";
 
 function App() {
     return (
         <>
             <Routes>
-                <Route></Route>
+                <Route path="/login" element={<Login />} />
             </Routes>
             <p>Placeholder</p>
         </>
