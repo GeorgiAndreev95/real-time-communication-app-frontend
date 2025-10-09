@@ -1,11 +1,11 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate, Link } from "react-router";
 import axios from "axios";
 
-import { useAppDispatch } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { authenticate } from "../../services/authenticationService";
-import classes from "./Login.module.css";
 import { setToken } from "../../slices/authSlice";
+import classes from "./Login.module.css";
 
 const Login = () => {
     const dispatch = useAppDispatch();
@@ -14,6 +14,14 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+
+    const token = useAppSelector((state) => state.auth.token);
+
+    // useEffect(() => {
+    //     if (token) {
+    //         navigate("/home");
+    //     }
+    // }, [navigate, token]);
 
     const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -110,12 +118,12 @@ const Login = () => {
                             <span className={classes.needAccount}>
                                 Need an account?
                             </span>
-                            <button
+                            <Link
+                                to="/signup"
                                 className={classes.registerButton}
-                                type="button"
                             >
                                 Register
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </form>
