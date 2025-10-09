@@ -1,11 +1,14 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { useAppSelector } from "../../hooks/reduxHooks";
+// import { useAppSelector } from "../../hooks/reduxHooks";
 import axios from "axios";
 
 import { signup } from "../../services/authenticationService";
+import FieldError from "../FieldError/FieldError";
 import classes from "./Signup.module.css";
+
+import type { ValidationError } from "../../types";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -15,7 +18,8 @@ const Signup = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
     const [errors, setErrors] = useState<{ path: string; msg: string }[]>([]);
-    const token = useAppSelector((state) => state.auth.token);
+
+    // const token = useAppSelector((state) => state.auth.token);
 
     // useEffect(() => {
     //     if (token) {
@@ -35,7 +39,6 @@ const Signup = () => {
 
     const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setErrors([]);
         setSuccessMsg("");
 
         try {
@@ -53,12 +56,13 @@ const Signup = () => {
                 axios.isAxiosError(error) &&
                 Array.isArray(error.response?.data?.errors)
             ) {
-                const formatted = error.response.data.errors.map(
-                    (err: any) => ({
-                        path: err.path || "",
-                        msg: err.msg || "Unknown error",
-                    })
-                );
+                const errorsData: ValidationError[] =
+                    error.response.data.errors;
+
+                const formatted = errorsData.map((err) => ({
+                    path: err.path || "",
+                    msg: err.msg || "Unknown error",
+                }));
                 setErrors(formatted);
             } else {
                 setErrors([
@@ -99,11 +103,10 @@ const Signup = () => {
                                 onChange={onEmailChangeHandler}
                                 autoComplete="username"
                             />
-                            <div className={classes.errorMessage}>
-                                {getErrorsFor("email").map((error, index) => (
-                                    <span key={index}>{error.msg}</span>
-                                ))}
-                            </div>
+
+                            {getErrorsFor("email").length > 0 && (
+                                <FieldError field="email" errors={errors} />
+                            )}
                         </div>
                         <div className={classes.inputBlock}>
                             <h2 className={classes.message}>
@@ -123,11 +126,9 @@ const Signup = () => {
                                 onChange={onUsernameChangeHandler}
                                 autoComplete="off"
                             />
-                            <div className={classes.errorMessage}>
-                                {getErrorsFor("username").map((e, i) => (
-                                    <span key={i}>{e.msg}</span>
-                                ))}
-                            </div>
+                            {getErrorsFor("username").length > 0 && (
+                                <FieldError field="username" errors={errors} />
+                            )}
                         </div>
                         <div className={classes.inputBlock}>
                             <h2 className={classes.message}>
@@ -147,11 +148,9 @@ const Signup = () => {
                                 onChange={onPasswordChangeHandler}
                                 autoComplete="current-password"
                             />
-                            <div className={classes.errorMessage}>
-                                {getErrorsFor("password").map((e, i) => (
-                                    <span key={i}>{e.msg}</span>
-                                ))}
-                            </div>
+                            {getErrorsFor("password").length > 0 && (
+                                <FieldError field="password" errors={errors} />
+                            )}
                         </div>
                         <div className={classes.inputBlock}>
                             <h2 className={classes.message}>
@@ -171,11 +170,12 @@ const Signup = () => {
                                 onChange={onConfirmPasswordChangeHandler}
                                 autoComplete="off"
                             />
-                            <div className={classes.errorMessage}>
-                                {getErrorsFor("confirmPassword").map((e, i) => (
-                                    <span key={i}>{e.msg}</span>
-                                ))}
-                            </div>
+                            {getErrorsFor("confirmPassword").length > 0 && (
+                                <FieldError
+                                    field="confirmPassword"
+                                    errors={errors}
+                                />
+                            )}
                         </div>
 
                         {successMsg && (

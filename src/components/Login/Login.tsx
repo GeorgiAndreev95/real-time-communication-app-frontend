@@ -1,8 +1,8 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router";
 import axios from "axios";
 
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch } from "../../hooks/reduxHooks";
 import { authenticate } from "../../services/authenticationService";
 import { setToken } from "../../slices/authSlice";
 import classes from "./Login.module.css";
@@ -15,7 +15,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
-    const token = useAppSelector((state) => state.auth.token);
+    // const token = useAppSelector((state) => state.auth.token);
 
     // useEffect(() => {
     //     if (token) {
