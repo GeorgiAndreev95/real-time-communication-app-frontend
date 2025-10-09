@@ -22,7 +22,6 @@ const Login = () => {
             const user = await authenticate(email, password);
             dispatch(setToken(user.token));
             localStorage.setItem("userToken", user.token);
-            localStorage.setItem("userRole", user.role);
             navigate("/home");
         } catch (error: unknown) {
             let errorMsg;
@@ -47,55 +46,80 @@ const Login = () => {
 
     return (
         <div className={classes.loginContainer}>
-            <form className={classes.loginForm} onSubmit={onSubmitHandler}>
-                <div>
-                    <h1>Welcome back!</h1>
-                    <p>We're so excited to see you again!</p>
-                </div>
-                <div>
-                    <div>
-                        <p>
-                            Email
-                            {errorMsg ? (
-                                <span> - Login or password is invalid</span>
-                            ) : (
-                                ""
-                            )}
-                        </p>
-                        <input
-                            className={classes.loginEmail}
-                            name="email"
-                            type="email"
-                            required
-                            placeholder="Email"
-                            value={email}
-                            onChange={onEmailChangeHandler}
-                            autoComplete="username"
-                        />
+            <div className={classes.loginWrapper}>
+                <form className={classes.loginForm} onSubmit={onSubmitHandler}>
+                    <div className={classes.loginHeader}>
+                        <h1>Welcome back!</h1>
+                        <p>We're so excited to see you again!</p>
                     </div>
-                    <div>
-                        <p>Password</p>
-                        <input
-                            className={classes.loginPassword}
-                            name="password"
-                            type="password"
-                            required
-                            placeholder="Password"
-                            value={password}
-                            onChange={onPasswordChangeHandler}
-                            autoComplete="current-password"
-                        />
-                    </div>
+                    <div className={classes.inputFields}>
+                        <div className={classes.inputBlock}>
+                            <h2
+                                className={`${classes.message} ${
+                                    errorMsg ? classes.error : ""
+                                }`}
+                            >
+                                Email
+                                {errorMsg ? (
+                                    <span className={classes.errorMessage}>
+                                        {" "}
+                                        - Login or password is invalid
+                                    </span>
+                                ) : (
+                                    <span className={classes.required}>*</span>
+                                )}
+                            </h2>
+                            <input
+                                className={`${classes.inputField} ${
+                                    errorMsg ? classes.errorBorder : ""
+                                }`}
+                                name="email"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={onEmailChangeHandler}
+                                autoComplete="username"
+                            />
+                        </div>
+                        <div className={classes.inputBlock}>
+                            <h2
+                                className={`${classes.message} ${
+                                    errorMsg ? classes.error : ""
+                                }`}
+                            >
+                                Password
+                                <span className={classes.required}>*</span>
+                            </h2>
+                            <input
+                                className={`${classes.inputField} ${
+                                    errorMsg ? classes.errorBorder : ""
+                                }`}
+                                name="password"
+                                type="password"
+                                required
+                                value={password}
+                                onChange={onPasswordChangeHandler}
+                                autoComplete="current-password"
+                            />
+                        </div>
 
-                    <button className={classes.loginButton} type="submit">
-                        Log In
-                    </button>
-                    <div>
-                        <span>Need an account?</span>
-                        <button type="button">Register</button>
+                        <button className={classes.loginButton} type="submit">
+                            Log In
+                        </button>
+                        <div>
+                            <span className={classes.needAccount}>
+                                Need an account?
+                            </span>
+                            <button
+                                className={classes.registerButton}
+                                type="button"
+                            >
+                                Register
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
 };

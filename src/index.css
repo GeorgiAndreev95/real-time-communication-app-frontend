@@ -12,6 +12,15 @@
     -webkit-text-size-adjust: 100%; /* prevent font inflation on iOS */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     color-scheme: light dark;
+    --input-background: #2e2e34;
+    --input-border: #42434a;
+    --border-focus: #7bb0f5;
+    --button-background: #5865f2;
+    --button-background-hover: #4654c0;
+    --button-border: #6571f3;
+    --button-border-hover: #5561c5;
+    --button-text: #7a8ad3;
+    --text-warning: #ef7774;
 }
 
 html,
@@ -53,7 +62,7 @@ h6 {
 }
 
 p {
-    margin: 0 0 1rem 0;
+    margin: 0 0 8px 0;
 }
 
 a {

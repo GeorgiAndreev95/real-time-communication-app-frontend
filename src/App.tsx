@@ -1,13 +1,15 @@
 import { Routes, Route } from "react-router";
 import Login from "./components/Login/Login";
+import AuthLayout from "./components/AuthLayout/AuthLayout";
 
 function App() {
     return (
         <>
             <Routes>
-                <Route path="/login" element={<Login />} />
+                <Route element={<AuthLayout />}>
+                    <Route path="/login" element={<Login />} />
+                </Route>
             </Routes>
-            <p>Placeholder</p>
         </>
     );
 }
