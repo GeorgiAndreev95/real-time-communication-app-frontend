@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import axios from "axios";
 
 import { signup } from "../../services/authenticationService";
-import FieldError from "../FieldError/FieldError";
+import FieldError from "../../components/FieldError/FieldError";
 import classes from "./Signup.module.css";
 
 import type { ValidationError } from "../../types";
@@ -182,8 +182,8 @@ const Signup = () => {
                             <motion.p
                                 key="success-msg"
                                 className={classes.successMessage}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
+                                initial={{ opacity: 0, scaleY: 0, y: -30 }}
+                                animate={{ opacity: 1, scaleY: 1, y: 0 }}
                                 transition={{
                                     duration: 0.3,
                                     ease: "easeInOut",

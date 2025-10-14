@@ -22,6 +22,10 @@
     --button-text: #7a8ad3;
     --text-warning: #ef7774;
     --text-default: #dfe0e2;
+    --background-default: #121214;
+    --server-icon-background: #1d1d1e;
+    --tooltip-background: #242429;
+    --tooltip-border: #2d2d32;
 }
 
 html,

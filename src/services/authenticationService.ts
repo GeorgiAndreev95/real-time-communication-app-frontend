@@ -6,10 +6,10 @@ export const authenticate = async (email: string, password: string) => {
             email,
             password,
         });
-        console.log(data);
+        // console.log(data);
         return data.user;
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         throw error;
     }
 };

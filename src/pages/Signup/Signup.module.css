@@ -107,18 +107,9 @@
 }
 
 .successMessage {
-    /* position: absolute;
-    top: 150px; */
     color: rgb(0, 167, 0);
     background: rgb(214, 255, 201);
     padding: 10px 20px;
     border: 2px solid rgb(0, 167, 0);
     border-radius: 10px;
-}
-
-.errorMessage {
-    padding-top: 8px;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--text-warning);
 }

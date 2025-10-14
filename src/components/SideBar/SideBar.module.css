@@ -1,0 +1,133 @@
+.sideBar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 72px;
+    height: 100vh;
+    background: var(--background-default);
+}
+
+.userServers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.userServer {
+    display: flex;
+    align-items: center;
+}
+
+.userServer:hover .selectIndicator:not(.selected) {
+    height: 20px;
+}
+
+.userServer:hover .serverIcon,
+.createServer:hover .createButtonIcon {
+    background: var(--button-background);
+}
+
+.indicatorWrapper {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    height: 40px;
+    width: 8px;
+}
+
+.selectIndicator {
+    display: block;
+    height: 8px;
+    width: 8px;
+    margin-left: -4px;
+    background: white;
+    border-radius: 0 4px 4px 0;
+    transition: 0.3s ease-in-out;
+}
+
+.selected {
+    height: 40px;
+}
+
+.serverWrapper,
+.createServer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.serverIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 400;
+    width: 40px;
+    height: 40px;
+    background-color: var(--server-icon-background);
+    border-radius: 12px;
+    transition: 0.2s ease-in-out;
+}
+
+.serverIcon:focus,
+.createButtonIcon:focus {
+    outline: none;
+}
+
+.createButtonIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 400;
+    width: 40px;
+    height: 40px;
+    background-color: var(--server-icon-background);
+    border-radius: 12px;
+    transition: 0.2s ease-in-out;
+}
+
+.tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--tooltip-background);
+    color: white;
+    padding: 8px;
+    min-height: 38px;
+    max-width: 200px;
+    border: 1px solid var(--tooltip-border);
+    border-radius: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.tooltip::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-45deg);
+    width: 8px;
+    height: 8px;
+    background-color: inherit;
+    border-left: 1px solid var(--tooltip-border);
+    border-top: 1px solid var(--tooltip-border);
+}
+
+.serverIcon:hover .tooltip,
+.createButtonIcon:hover .tooltip {
+    opacity: 1;
+}

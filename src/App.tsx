@@ -1,9 +1,10 @@
 import { Routes, Route, useLocation } from "react-router";
-
-import Login from "./components/Login/Login";
-import AuthLayout from "./components/AuthLayout/AuthLayout";
-import Signup from "./components/Signup/Signup";
 import { AnimatePresence, motion } from "motion/react";
+
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
+import AuthLayout from "./pages/AuthLayout/AuthLayout";
+import MainPage from "./pages/MainPage/MainPage";
 
 function App() {
     const location = useLocation();
@@ -45,6 +46,9 @@ function App() {
                                 </motion.div>
                             }
                         />
+                    </Route>
+                    <Route path="/" element={<MainPage />}>
+                        <Route path="/server/:serverId" />
                     </Route>
                 </Routes>
             </AnimatePresence>

@@ -1,1 +1,12 @@
 export type ValidationError = { path?: string; msg?: string };
+
+export type UserServer = {
+    userId: number;
+    serverId: number;
+    roleId: number;
+    server: {
+        id: number;
+        image: string | null;
+        name: string;
+    };
+};
