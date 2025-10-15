@@ -12,11 +12,18 @@ export const getUserServers = async () => {
     }
 };
 
-export const createServer = async (name: string, image: File) => {
+export const createServer = async (name: string, image: File | null) => {
     try {
-        const { data } = await axiosInstance.post("/server", {
-            name,
-            image,
+        const formData = new FormData();
+        formData.append("name", name);
+        if (image) {
+            formData.append("image", image);
+        }
+
+        const { data } = await axiosInstance.post("/server", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
         });
 
         console.log(data);

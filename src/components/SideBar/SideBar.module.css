@@ -28,6 +28,10 @@
     background: var(--button-background);
 }
 
+.userServer:hover .hideBackground {
+    background: none;
+}
+
 .indicatorWrapper {
     display: flex;
     position: absolute;
@@ -77,6 +81,17 @@
     outline: none;
 }
 
+.hideBackground {
+    background: none;
+}
+
+.serverIconImg {
+    height: 40px;
+    width: 40px;
+    border-radius: 12px;
+    background: none;
+}
+
 .createButtonIcon {
     display: flex;
     justify-content: center;
@@ -88,6 +103,7 @@
     background-color: var(--server-icon-background);
     border-radius: 12px;
     transition: 0.2s ease-in-out;
+    cursor: pointer;
 }
 
 .tooltip {
@@ -130,4 +146,17 @@
 .serverIcon:hover .tooltip,
 .createButtonIcon:hover .tooltip {
     opacity: 1;
+    animation: popUp 0.2s ease-in-out;
+}
+
+@keyframes popUp {
+    0% {
+        scale: 1;
+    }
+    50% {
+        scale: 1.05;
+    }
+    100% {
+        scale: 1;
+    }
 }

@@ -9,7 +9,12 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { setUserServers } from "../../slices/serverSlice";
 import classes from "./SideBar.module.css";
 
-const SideBar = () => {
+type SideBarProps = {
+    onOpenModal: () => void;
+    modalState: boolean;
+};
+
+const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     const dispatch = useAppDispatch();
     const userServers = useAppSelector((state) => state.server.userServers);
 
@@ -30,7 +35,7 @@ const SideBar = () => {
         };
 
         fetchUserServers();
-    }, [dispatch]);
+    }, [dispatch, modalState]);
 
     useEffect(() => {
         if (!serverId) return;
@@ -78,11 +83,23 @@ const SideBar = () => {
                                     <div className={classes.serverWrapper}>
                                         <Link
                                             to={`/server/${server.serverId}`}
-                                            className={classes.serverIcon}
+                                            className={`${classes.serverIcon} ${
+                                                image
+                                                    ? classes.hideBackground
+                                                    : ""
+                                            }`}
                                         >
-                                            {!image
-                                                ? name.charAt(0).toUpperCase()
-                                                : image}
+                                            {!image ? (
+                                                name.charAt(0).toUpperCase()
+                                            ) : (
+                                                <img
+                                                    className={
+                                                        classes.serverIconImg
+                                                    }
+                                                    src={`http://localhost:3000${image}`}
+                                                    alt="Server icon"
+                                                />
+                                            )}
                                             <span className={classes.tooltip}>
                                                 {name}
                                             </span>
@@ -95,15 +112,15 @@ const SideBar = () => {
                 )}
                 <div className={classes.createServer}>
                     <div className={classes.createButtonWrapper}>
-                        <Link
-                            to="/server/create"
+                        <a
                             className={classes.createButtonIcon}
+                            onClick={onOpenModal}
                         >
                             <FaCirclePlus />
                             <span className={classes.tooltip}>
                                 Add a Server
                             </span>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </div>

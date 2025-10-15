@@ -1,0 +1,189 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--tooltip-background, #242429);
+    color: #fff;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    width: 420px;
+    animation: slideUp 0.25s ease-out;
+}
+
+.textWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 24px 0 24px;
+}
+
+.textWrapper > p {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.25;
+}
+
+.formWrapper {
+    width: 100%;
+    margin: 16px 0;
+    padding: 8px 24px;
+}
+
+.formGroupOne {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.formGroupTwo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.formGroupTwo label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.formGroupTwo input {
+    height: 40px;
+    padding: 1px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    background: #1e1f22;
+    color: white;
+}
+
+.formGroupTwo input:focus {
+    outline: none;
+    border: 1px solid var(--button-background);
+    box-shadow: 0 0 0 1px var(--button-background);
+}
+
+.modalActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.modalActions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modalActions button[type="submit"] {
+    background: var(--button-background);
+    color: white;
+    height: 40px;
+    width: 100px;
+    border: 1px solid var(--button-border);
+    transition: 0.2s ease-in-out;
+}
+
+.modalActions button[type="submit"]:hover {
+    background: var(--button-background-hover);
+    border: 1px solid var(--button-border-hover);
+}
+
+.modalActions button[type="button"] {
+    background: transparent;
+    color: white;
+    padding: 0;
+    height: 20px;
+}
+
+.modalActions button[type="button"]:hover {
+    text-decoration: underline;
+}
+
+.required {
+    color: var(--text-warning);
+    padding-left: 4px;
+}
+
+.hiddenFileUpload {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.customFileButton {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+    color: #aaaab1;
+    border: 2px dashed #aaaab1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.customFileButton > p {
+    margin: 0;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.cameraImg {
+    scale: 1.5;
+    margin-bottom: 5px;
+    color: #aaaab1;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.previewUrl {
+    border: none;
+    background: #393a41;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
