@@ -82,7 +82,7 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                                     </div>
                                     <div className={classes.serverWrapper}>
                                         <Link
-                                            to={`/server/${server.serverId}`}
+                                            to={`/channels/${server.serverId}`}
                                             className={`${classes.serverIcon} ${
                                                 image
                                                     ? classes.hideBackground

@@ -10,3 +10,9 @@ export type UserServer = {
         name: string;
     };
 };
+
+export type ServerChannel = {
+    id: number;
+    name: string;
+    serverId: number;
+};

@@ -3,8 +3,6 @@ import axiosInstance from "../../axiosInstance.ts";
 export const getUserServers = async () => {
     try {
         const { data } = await axiosInstance.get("/server");
-
-        console.log(data);
         return data;
     } catch (error) {
         console.log(error);

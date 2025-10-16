@@ -5,6 +5,8 @@ import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
 import AuthLayout from "./pages/AuthLayout/AuthLayout";
 import MainPage from "./pages/MainPage/MainPage";
+import Server from "./pages/Server/Server";
+import NoServerSelected from "./components/NoSelectedServer/NoServerSelected";
 
 function App() {
     const location = useLocation();
@@ -48,7 +50,11 @@ function App() {
                         />
                     </Route>
                     <Route path="/" element={<MainPage />}>
-                        <Route path="/server/:serverId" />
+                        <Route path="/" element={<NoServerSelected />} />
+                        <Route
+                            path="/channels/:serverId"
+                            element={<Server />}
+                        />
                     </Route>
                 </Routes>
             </AnimatePresence>
