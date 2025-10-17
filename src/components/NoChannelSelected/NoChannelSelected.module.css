@@ -1,0 +1,15 @@
+.noChannelSelected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--server-backgound);
+    width: 100%;
+    border-left: 1px solid #222225;
+}
+
+.noChannelSelected > h2 {
+    text-align: center;
+    color: var(--text-default);
+    font-weight: 600;
+    font-size: 24px;
+}

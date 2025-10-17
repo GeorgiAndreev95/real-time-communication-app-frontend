@@ -7,6 +7,8 @@ import AuthLayout from "./pages/AuthLayout/AuthLayout";
 import MainPage from "./pages/MainPage/MainPage";
 import Server from "./pages/Server/Server";
 import NoServerSelected from "./components/NoSelectedServer/NoServerSelected";
+import NoChannelSelected from "./components/NoChannelSelected/NoChannelSelected";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 function App() {
     const location = useLocation();
@@ -49,12 +51,16 @@ function App() {
                             }
                         />
                     </Route>
-                    <Route path="/" element={<MainPage />}>
-                        <Route path="/" element={<NoServerSelected />} />
-                        <Route
-                            path="/channels/:serverId"
-                            element={<Server />}
-                        />
+                    <Route element={<ProtectedRoutes />}>
+                        <Route path="/" element={<MainPage />}>
+                            <Route index element={<NoServerSelected />} />
+                            <Route
+                                path="/channels/:serverId"
+                                element={<Server />}
+                            >
+                                <Route index element={<NoChannelSelected />} />
+                            </Route>
+                        </Route>
                     </Route>
                 </Routes>
             </AnimatePresence>

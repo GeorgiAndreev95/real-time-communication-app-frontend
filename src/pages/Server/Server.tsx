@@ -3,7 +3,7 @@ import { Outlet, useParams } from "react-router";
 import type { UserServer } from "../../types";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import ServerChannels from "../../components/ServerChannels/ServerChannels";
-// import classes from "./Server.module.css";
+import classes from "./Server.module.css";
 
 const Server = () => {
     const { serverId } = useParams();
@@ -13,7 +13,7 @@ const Server = () => {
     );
 
     return (
-        <div>
+        <div className={classes.serverLayout}>
             <ServerChannels server={server} />
             <Outlet />
         </div>
