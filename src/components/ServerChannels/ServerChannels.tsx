@@ -11,9 +11,7 @@ type ServerChannelProps = {
 
 const ServerChannels = ({ server }: ServerChannelProps) => {
     const [channels, setChannels] = useState<ServerChannel[]>([]);
-    const { serverId, channelId } = useParams();
-
-    console.log(channelId);
+    const { serverId } = useParams();
 
     useEffect(() => {
         const getChannels = async () => {
@@ -32,8 +30,6 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                 </div>
                 <div className={classes.channelsContainer}>
                     {channels.map((channel: ServerChannel) => {
-                        // const isActive = ;
-
                         return (
                             <Link
                                 key={channel.id}

@@ -1,0 +1,71 @@
+.channelWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--server-backgound);
+    color: white;
+    overflow: scroll;
+}
+
+.channelContentWrapper {
+    margin-top: 20px;
+    border-top: 1px solid #222225;
+}
+
+.channelHeader {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border-bottom: 1px solid #202225;
+    font-weight: 600;
+}
+
+.channelTitle {
+    font-size: 16px;
+    font-weight: 400;
+    padding: 16px 20px;
+}
+
+.messagesContainer {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.contentWrapper {
+    margin-left: 16px;
+}
+
+.usernameAndDate {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.profilePircture {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: gray;
+}
+
+.username {
+    font-weight: bold;
+    color: var(--text-default);
+}
+
+.date {
+    color: #7f8088;
+    font-size: 12px;
+}
+
+.content {
+    margin: 8px 0;
+    color: var(--text-default);
+}

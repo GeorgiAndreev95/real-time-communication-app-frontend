@@ -9,6 +9,7 @@ import Server from "./pages/Server/Server";
 import NoServerSelected from "./components/NoSelectedServer/NoServerSelected";
 import NoChannelSelected from "./components/NoChannelSelected/NoChannelSelected";
 import ProtectedRoutes from "./ProtectedRoutes";
+import Channel from "./components/Channel/Channel";
 
 function App() {
     const location = useLocation();
@@ -59,6 +60,10 @@ function App() {
                                 element={<Server />}
                             >
                                 <Route index element={<NoChannelSelected />} />
+                                <Route
+                                    path=":channelId"
+                                    element={<Channel />}
+                                />
                             </Route>
                         </Route>
                     </Route>

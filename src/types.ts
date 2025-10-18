@@ -16,3 +16,15 @@ export type ServerChannel = {
     name: string;
     serverId: number;
 };
+
+export type Message = {
+    id: number;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    sender: {
+        id: number;
+        profilePicture: string;
+        username: string;
+    };
+};
