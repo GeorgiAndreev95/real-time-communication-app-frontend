@@ -4,9 +4,12 @@ import { useParams } from "react-router";
 import type { Message, ServerChannel } from "../../types";
 import { getServerChannels } from "../../services/channelService";
 import { getMessages } from "../../services/messageService";
+import { useAppDispatch } from "../../hooks/reduxHooks";
 import classes from "./Channel.module.css";
+import { setSelectedChannels } from "../../slices/serverSlice";
 
 const Channel = () => {
+    const dispatch = useAppDispatch();
     const [messages, setMessages] = useState([]);
     const [channels, setChannels] = useState<ServerChannel[]>([]);
     const { serverId, channelId } = useParams();
@@ -31,6 +34,17 @@ const Channel = () => {
 
         fetchMessages();
     }, [channelId]);
+
+    useEffect(() => {
+        if (serverId && channelId) {
+            dispatch(
+                setSelectedChannels({
+                    serverId: +serverId,
+                    channelId: +channelId,
+                })
+            );
+        }
+    }, [channelId, dispatch, serverId]);
 
     return (
         <div className={classes.channelWrapper}>
