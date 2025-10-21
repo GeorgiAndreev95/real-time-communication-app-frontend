@@ -2,49 +2,34 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import type { Message, ServerChannel } from "../../types";
-import { getServerChannels } from "../../services/channelService";
 import { getMessages } from "../../services/messageService";
-import { useAppDispatch } from "../../hooks/reduxHooks";
+import { saveUserPreference } from "../../services/userPreferenceService";
 import classes from "./Channel.module.css";
-import { setSelectedChannels } from "../../slices/serverSlice";
+import { useAppSelector } from "../../hooks/reduxHooks";
 
 const Channel = () => {
-    const dispatch = useAppDispatch();
-    const [messages, setMessages] = useState([]);
-    const [channels, setChannels] = useState<ServerChannel[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const { serverId, channelId } = useParams();
+    const channels: ServerChannel[] = useAppSelector(
+        (state) => state.server.serverChannels
+    );
+
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
 
     useEffect(() => {
-        const fetchChannels = async () => {
-            const data = await getServerChannels(+serverId!);
-            setChannels(data.serverChannels);
-        };
+        const fetchMessagesAndSavePref = async () => {
+            if (!serverId || !channelId) return;
 
-        fetchChannels();
-    }, [serverId]);
-
-    useEffect(() => {
-        const fetchMessages = async () => {
             const channelMessages = await getMessages(+channelId!);
             setMessages(channelMessages.messages);
+
+            saveUserPreference(+serverId!, +channelId).catch(console.error);
         };
 
-        fetchMessages();
-    }, [channelId]);
-
-    useEffect(() => {
-        if (serverId && channelId) {
-            dispatch(
-                setSelectedChannels({
-                    serverId: +serverId,
-                    channelId: +channelId,
-                })
-            );
-        }
-    }, [channelId, dispatch, serverId]);
+        fetchMessagesAndSavePref();
+    }, [channelId, serverId]);
 
     return (
         <div className={classes.channelWrapper}>

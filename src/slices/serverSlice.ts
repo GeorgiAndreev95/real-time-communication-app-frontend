@@ -1,17 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import type { UserServer } from "../types";
-
-type ServerSlice = {
-    userServers: UserServer[];
-    selectedChannels: {
-        [serverId: number]: number;
-    };
-};
-
-const initialState: ServerSlice = {
+const initialState = {
     userServers: [],
-    selectedChannels: {},
+    serverChannels: [],
 };
 
 export const serverSlice = createSlice({
@@ -21,13 +12,12 @@ export const serverSlice = createSlice({
         setUserServers: (state, action) => {
             state.userServers = action.payload;
         },
-        setSelectedChannels: (state, action) => {
-            const { serverId, channelId } = action.payload;
-            state.selectedChannels[serverId] = channelId;
+        setServerChannels: (state, action) => {
+            state.serverChannels = action.payload;
         },
     },
 });
 
-export const { setUserServers, setSelectedChannels } = serverSlice.actions;
+export const { setUserServers, setServerChannels } = serverSlice.actions;
 
 export default serverSlice.reducer;

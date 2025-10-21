@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Outlet, useParams } from "react-router";
+import { Outlet, useNavigate, useParams } from "react-router";
 
 import { FaCirclePlus } from "react-icons/fa6";
 
@@ -8,6 +8,7 @@ import { getUserServers } from "../../services/serverService";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { setUserServers } from "../../slices/serverSlice";
 import classes from "./SideBar.module.css";
+import { getUserPreference } from "../../services/userPreferenceService";
 
 type SideBarProps = {
     onOpenModal: () => void;
@@ -15,10 +16,11 @@ type SideBarProps = {
 };
 
 const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const userServers = useAppSelector((state) => state.server.userServers);
-
     const { serverId } = useParams<{ serverId: string }>();
+
     const [animateState, setAnimateState] = useState<
         "idle" | "transitioning" | "selected"
     >("idle");
@@ -27,7 +29,6 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
         const fetchUserServers = async () => {
             try {
                 const data = await getUserServers();
-                console.log(data.userServers);
                 dispatch(setUserServers(data.userServers));
             } catch (error) {
                 console.error("Error fetching servers:", error);
@@ -49,6 +50,24 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
         return () => clearTimeout(timeout);
     }, [serverId]);
 
+    const handleServerClick = async (server: UserServer) => {
+        const serverId = server.serverId;
+
+        try {
+            let lastChannelId = await getUserPreference(serverId);
+
+            if (!lastChannelId && server.server.channels?.length) {
+                lastChannelId = server.server.channels[0].id;
+            }
+
+            if (lastChannelId) {
+                navigate(`/channels/${serverId}/${lastChannelId}`);
+            }
+        } catch (error) {
+            console.error("Error navigating to server:", error);
+        }
+    };
+
     return (
         <>
             <div className={classes.sideBar}>
@@ -62,7 +81,10 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                             return (
                                 <div
                                     key={server.serverId}
-                                    className={classes.userServer}
+                                    className={`${classes.userServer} ${
+                                        isActive ? classes.active : ""
+                                    }`}
+                                    onClick={() => handleServerClick(server)}
                                 >
                                     <div className={classes.indicatorWrapper}>
                                         <span
@@ -81,29 +103,19 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                                         ></span>
                                     </div>
                                     <div className={classes.serverWrapper}>
-                                        <Link
-                                            to={`/channels/${server.serverId}`}
-                                            className={`${classes.serverIcon} ${
-                                                image
-                                                    ? classes.hideBackground
-                                                    : ""
-                                            }`}
-                                        >
-                                            {!image ? (
-                                                name.charAt(0).toUpperCase()
-                                            ) : (
-                                                <img
-                                                    className={
-                                                        classes.serverIconImg
-                                                    }
-                                                    src={`http://localhost:3000${image}`}
-                                                    alt="Server icon"
-                                                />
-                                            )}
-                                            <span className={classes.tooltip}>
-                                                {name}
-                                            </span>
-                                        </Link>
+                                        {!server.server.image ? (
+                                            <div className={classes.serverIcon}>
+                                                {name.charAt(0).toUpperCase()}
+                                            </div>
+                                        ) : (
+                                            <img
+                                                src={`http://localhost:3000${image}`}
+                                                alt="Server icon"
+                                                className={
+                                                    classes.serverIconImg
+                                                }
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             );

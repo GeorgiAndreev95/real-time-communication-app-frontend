@@ -5,7 +5,6 @@ export const getMessages = async (channelId: number) => {
         const { data } = await axiosInstance.get(
             `/channel/${channelId}/message`
         );
-        console.log(data);
         return data;
     } catch (error) {
         console.log(error);

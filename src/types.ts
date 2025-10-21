@@ -8,6 +8,10 @@ export type UserServer = {
         id: number;
         image: string | null;
         name: string;
+        channels: {
+            id: number;
+            name: string;
+        }[];
     };
 };
 

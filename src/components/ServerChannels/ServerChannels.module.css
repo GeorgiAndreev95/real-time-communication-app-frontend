@@ -28,6 +28,9 @@
 }
 
 .channelsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     margin: 20px 8px;
     margin-bottom: 0px;
 }
@@ -41,8 +44,13 @@
     padding: 8px;
 }
 
-.channelName:hover {
+.channelName:hover,
+.selected {
     background: var(--server-icon-background);
     border-radius: 8px;
     color: white;
+}
+
+.channelName:focus {
+    outline: none;
 }

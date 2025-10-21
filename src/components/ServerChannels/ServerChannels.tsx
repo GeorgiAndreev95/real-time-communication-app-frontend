@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
-import { getServerChannels } from "../../services/channelService";
 import type { ServerChannel, UserServer } from "../../types";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { setServerChannels } from "../../slices/serverSlice";
+import { getServerChannels } from "../../services/channelService";
 import classes from "./ServerChannels.module.css";
 
 type ServerChannelProps = {
@@ -11,15 +13,18 @@ type ServerChannelProps = {
 
 const ServerChannels = ({ server }: ServerChannelProps) => {
     const [channels, setChannels] = useState<ServerChannel[]>([]);
-    const { serverId } = useParams();
+    const { serverId, channelId } = useParams();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const getChannels = async () => {
-            const channels = await getServerChannels(+serverId!);
-            setChannels(channels.serverChannels);
+        const fetchChannels = async () => {
+            if (!serverId) return;
+            const data = await getServerChannels(+serverId);
+            setChannels(data.serverChannels);
+            dispatch(setServerChannels(data.serverChannels));
         };
 
-        getChannels();
+        fetchChannels();
     }, [serverId]);
 
     return (
@@ -30,11 +35,14 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                 </div>
                 <div className={classes.channelsContainer}>
                     {channels.map((channel: ServerChannel) => {
+                        const isSelected = +channelId! === channel.id;
                         return (
                             <Link
                                 key={channel.id}
                                 to={`${channel.id}`}
-                                className={classes.channelName}
+                                className={`${classes.channelName} ${
+                                    isSelected ? classes.selected : ""
+                                }`}
                             >
                                 {channel.name}
                             </Link>
