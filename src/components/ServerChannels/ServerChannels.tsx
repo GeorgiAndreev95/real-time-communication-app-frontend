@@ -25,7 +25,7 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         };
 
         fetchChannels();
-    }, [serverId]);
+    }, [dispatch, serverId]);
 
     return (
         <div className={classes.channelsWrapper}>

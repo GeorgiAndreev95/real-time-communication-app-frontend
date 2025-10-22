@@ -13,10 +13,21 @@ const Channel = () => {
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
-
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
+    const token = localStorage.getItem("userToken");
+
+    const currentUserId = token
+        ? (() => {
+              try {
+                  const payload = JSON.parse(atob(token.split(".")[1]));
+                  return payload.id;
+              } catch {
+                  return null;
+              }
+          })()
+        : null;
 
     useEffect(() => {
         const fetchMessagesAndSavePref = async () => {
@@ -46,7 +57,14 @@ const Channel = () => {
                         );
 
                         return (
-                            <div key={msg.id} className={classes.message}>
+                            <div
+                                key={msg.id}
+                                className={`${classes.message} ${
+                                    currentUserId === msg.sender.id
+                                        ? classes.currentUser
+                                        : ""
+                                }`}
+                            >
                                 <img
                                     className={classes.profilePircture}
                                     src={`http://localhost:3000${msg.sender.profilePicture}`}

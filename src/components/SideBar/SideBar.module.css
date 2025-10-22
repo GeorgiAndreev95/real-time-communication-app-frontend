@@ -19,10 +19,6 @@
     align-items: center;
 }
 
-.userServer:hover .selectIndicator:not(.selected) {
-    height: 20px;
-}
-
 .userServer:hover .serverIcon,
 .createServer:hover .createButtonIcon {
     background: var(--button-background);
@@ -38,16 +34,10 @@
 
 .selectIndicator {
     display: block;
-    height: 8px;
     width: 8px;
     margin-left: -4px;
     background: white;
     border-radius: 0 4px 4px 0;
-    transition: 0.3s ease-in-out;
-}
-
-.selected {
-    height: 40px;
 }
 
 .serverWrapper,

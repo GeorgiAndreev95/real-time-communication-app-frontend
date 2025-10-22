@@ -9,6 +9,7 @@
 }
 
 .channelContentWrapper {
+    height: 100%;
     margin-top: 20px;
     border-top: 1px solid #222225;
 }
@@ -28,6 +29,10 @@
 }
 
 .messagesContainer {
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     flex: 1;
     padding: 16px;
     overflow-y: auto;
@@ -36,6 +41,10 @@
 .message {
     display: flex;
     margin-bottom: 10px;
+}
+
+.currentUser {
+    justify-content: flex-end;
 }
 
 .contentWrapper {

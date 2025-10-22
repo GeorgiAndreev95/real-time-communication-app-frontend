@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useParams } from "react-router";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { motion } from "motion/react";
 
 import { FaCirclePlus } from "react-icons/fa6";
 
 import type { UserServer } from "../../types";
 import { getUserServers } from "../../services/serverService";
+import { getUserPreference } from "../../services/userPreferenceService";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { setUserServers } from "../../slices/serverSlice";
 import classes from "./SideBar.module.css";
-import { getUserPreference } from "../../services/userPreferenceService";
 
 type SideBarProps = {
     onOpenModal: () => void;
@@ -20,10 +21,6 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     const dispatch = useAppDispatch();
     const userServers = useAppSelector((state) => state.server.userServers);
     const { serverId } = useParams<{ serverId: string }>();
-
-    const [animateState, setAnimateState] = useState<
-        "idle" | "transitioning" | "selected"
-    >("idle");
 
     useEffect(() => {
         const fetchUserServers = async () => {
@@ -37,18 +34,6 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
 
         fetchUserServers();
     }, [dispatch, modalState]);
-
-    useEffect(() => {
-        if (!serverId) return;
-
-        setAnimateState("transitioning");
-
-        const timeout = setTimeout(() => {
-            setAnimateState("selected");
-        }, 50);
-
-        return () => clearTimeout(timeout);
-    }, [serverId]);
 
     const handleServerClick = async (server: UserServer) => {
         const serverId = server.serverId;
@@ -76,36 +61,49 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                         {userServers.map((server: UserServer) => {
                             const { image, name } = server.server;
                             const isActive = +serverId! === server.serverId;
-                            const isTransitioning =
-                                animateState === "transitioning";
+
                             return (
-                                <div
+                                <motion.div
                                     key={server.serverId}
                                     className={`${classes.userServer} ${
                                         isActive ? classes.active : ""
                                     }`}
                                     onClick={() => handleServerClick(server)}
+                                    initial={false}
+                                    whileHover={isActive ? {} : "hover"}
+                                    animate={isActive ? "active" : "idle"}
                                 >
                                     <div className={classes.indicatorWrapper}>
-                                        <span
-                                            className={`${
-                                                classes.selectIndicator
-                                            } ${
-                                                isTransitioning
-                                                    ? classes.transitioning
-                                                    : ""
-                                            } ${
-                                                isActive &&
-                                                animateState === "selected"
-                                                    ? classes.selected
-                                                    : ""
-                                            }`}
-                                        ></span>
+                                        <motion.span
+                                            className={classes.selectIndicator}
+                                            variants={{
+                                                idle: {
+                                                    height: 20,
+                                                    opacity: 0,
+                                                },
+                                                hover: {
+                                                    height: 20,
+                                                    opacity: 1,
+                                                },
+                                                active: {
+                                                    height: 40,
+                                                },
+                                            }}
+                                            transition={{
+                                                type: "tween",
+                                                ease: "easeOut",
+                                                duration: 0.2,
+                                            }}
+                                        />
                                     </div>
                                     <div className={classes.serverWrapper}>
                                         {!server.server.image ? (
                                             <div className={classes.serverIcon}>
-                                                {name.charAt(0).toUpperCase()}
+                                                {name
+                                                    .split(" ")
+                                                    .map((word) =>
+                                                        word.charAt(0)
+                                                    )}
                                             </div>
                                         ) : (
                                             <img
@@ -117,7 +115,7 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                                             />
                                         )}
                                     </div>
-                                </div>
+                                </motion.div>
                             );
                         })}
                     </div>
@@ -136,7 +134,6 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                     </div>
                 </div>
             </div>
-            <Outlet />
         </>
     );
 };

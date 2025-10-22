@@ -16,13 +16,14 @@ function App() {
 
     return (
         <>
-            <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                    <Route element={<AuthLayout />}>
-                        <Route
-                            path="/login"
-                            element={
+            <Routes location={location}>
+                <Route element={<AuthLayout />}>
+                    <Route
+                        path="/login"
+                        element={
+                            <AnimatePresence mode="wait">
                                 <motion.div
+                                    key={location.key}
                                     initial={{ opacity: 0, y: -40 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -40 }}
@@ -33,12 +34,15 @@ function App() {
                                 >
                                     <Login />
                                 </motion.div>
-                            }
-                        />
-                        <Route
-                            path="/signup"
-                            element={
+                            </AnimatePresence>
+                        }
+                    />
+                    <Route
+                        path="/signup"
+                        element={
+                            <AnimatePresence mode="wait">
                                 <motion.div
+                                    key={location.key}
                                     initial={{ opacity: 0, y: -40 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -40 }}
@@ -49,26 +53,20 @@ function App() {
                                 >
                                     <Signup />
                                 </motion.div>
-                            }
-                        />
-                    </Route>
-                    <Route element={<ProtectedRoutes />}>
-                        <Route path="/" element={<MainPage />}>
-                            <Route index element={<NoServerSelected />} />
-                            <Route
-                                path="/channels/:serverId"
-                                element={<Server />}
-                            >
-                                <Route index element={<NoChannelSelected />} />
-                                <Route
-                                    path=":channelId"
-                                    element={<Channel />}
-                                />
-                            </Route>
+                            </AnimatePresence>
+                        }
+                    />
+                </Route>
+                <Route element={<ProtectedRoutes />}>
+                    <Route path="/" element={<MainPage />}>
+                        <Route index element={<NoServerSelected />} />
+                        <Route path="/channels/:serverId" element={<Server />}>
+                            <Route index element={<NoChannelSelected />} />
+                            <Route path=":channelId" element={<Channel />} />
                         </Route>
                     </Route>
-                </Routes>
-            </AnimatePresence>
+                </Route>
+            </Routes>
         </>
     );
 }

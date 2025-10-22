@@ -3,6 +3,7 @@ import { useState } from "react";
 import SideBar from "../../components/SideBar/SideBar";
 import CreateServerModal from "../../components/CreateServerModal/CreateServerModal";
 import classes from "./MainPage.module.css";
+import { Outlet } from "react-router";
 
 const MainPage = () => {
     const [showModal, setShowModal] = useState(false);
@@ -13,6 +14,8 @@ const MainPage = () => {
                 onOpenModal={() => setShowModal(true)}
                 modalState={showModal}
             />
+            <Outlet />
+
             {showModal && (
                 <CreateServerModal onClose={() => setShowModal(false)} />
             )}
