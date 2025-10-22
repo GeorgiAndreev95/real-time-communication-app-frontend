@@ -87,6 +87,7 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
                                                 },
                                                 active: {
                                                     height: 40,
+                                                    opacity: 1,
                                                 },
                                             }}
                                             transition={{

@@ -5,7 +5,7 @@
     height: 100vh;
     background-color: var(--server-backgound);
     color: white;
-    overflow: scroll;
+    overflow: hidden;
 }
 
 .channelContentWrapper {
@@ -29,13 +29,13 @@
 }
 
 .messagesContainer {
-    height: 95%;
+    height: 92%;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    flex: 1;
     padding: 16px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .message {
@@ -43,21 +43,18 @@
     margin-bottom: 10px;
 }
 
-.currentUser {
-    justify-content: flex-end;
-}
-
 .contentWrapper {
-    margin-left: 16px;
+    vertical-align: middle;
 }
 
 .usernameAndDate {
     display: flex;
     align-items: baseline;
     gap: 10px;
+    margin: 8px 0;
 }
 
-.profilePircture {
+.profilePicture {
     height: 40px;
     width: 40px;
     border-radius: 50%;
@@ -65,16 +62,60 @@
 }
 
 .username {
-    font-weight: bold;
+    font-weight: 450;
     color: var(--text-default);
+    font-size: 15px;
 }
 
 .date {
     color: #7f8088;
-    font-size: 12px;
+    font-size: 11px;
+}
+
+.messageGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.messageHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .content {
     margin: 8px 0;
     color: var(--text-default);
+    font-size: 15px;
+}
+
+.groupedContent {
+    margin-left: 52px; /* aligns with text under avatar */
+    margin-bottom: 8px;
+    margin-top: 8px;
+    color: var(--text-default);
+    font-size: 15px;
+}
+
+.inputForm {
+    display: flex;
+    position: sticky;
+    width: 100%;
+    bottom: 0;
+}
+
+.inputField {
+    flex: 1;
+    height: 56px;
+    margin: 0 8px 8px 8px;
+    padding: 8px 16px;
+    background: #222327;
+    border: 1px solid #27282b;
+    border-radius: 8px;
+    color: white;
+}
+
+.inputField:focus {
+    outline: none;
 }
