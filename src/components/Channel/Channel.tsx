@@ -1,22 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 
 import type { Message, ServerChannel } from "../../types";
 import { createMessage, getMessages } from "../../services/messageService";
 import { saveUserPreference } from "../../services/userPreferenceService";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { useSocket } from "../../hooks/useSocket";
+import { setChannelMessages } from "../../slices/channelSlice";
 import classes from "./Channel.module.css";
-import { useAppSelector } from "../../hooks/reduxHooks";
 
 const Channel = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const dispatch = useAppDispatch();
     const [content, setContent] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { serverId, channelId } = useParams();
+    const messages = useAppSelector((state) => state.channel.channelMessages);
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
+
+    useSocket(+channelId!);
 
     const groupMessages = (
         messages: Message[],
@@ -48,15 +54,38 @@ const Channel = () => {
         return grouped;
     };
 
-    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const autoGrow = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = "auto";
+
+            textarea.style.height = textarea.scrollHeight + "px";
+
+            // Optional: If you want to limit the growth, you can check:
+            const maxHeight = 200; // e.g. 200 pixels
+            if (textarea.scrollHeight > maxHeight) {
+                textarea.style.overflowY = "auto"; // Re-enable scrolling when max height is hit
+                textarea.style.height = maxHeight + "px";
+            } else {
+                textarea.style.overflowY = "hidden"; // Keep scrollbar hidden while growing
+            }
+        }
+    };
+
+    const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(event.target.value);
+        autoGrow();
     };
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        await createMessage(+channelId!, content);
-        setContent("");
+        try {
+            await createMessage(+channelId!, content);
+            setContent("");
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
     };
 
     useEffect(() => {
@@ -64,13 +93,17 @@ const Channel = () => {
             if (!serverId || !channelId) return;
 
             const channelMessages = await getMessages(+channelId!);
-            setMessages(channelMessages.messages);
+            dispatch(setChannelMessages(channelMessages));
 
             saveUserPreference(+serverId!, +channelId).catch(console.error);
         };
 
         fetchMessagesAndSavePref();
-    }, [channelId, serverId, messages]);
+    }, [channelId, dispatch, serverId]);
+
+    useEffect(() => {
+        autoGrow();
+    }, [content]);
 
     return (
         <div className={classes.channelWrapper}>
@@ -135,14 +168,14 @@ const Channel = () => {
                 </div>
 
                 <form className={classes.inputForm} onSubmit={onSubmitHandler}>
-                    <input
+                    <textarea
                         className={classes.inputField}
-                        type="text"
                         name="content"
                         required
                         placeholder={`Message #${selectedChannel?.name}`}
                         value={content}
                         onChange={onInputChange}
+                        ref={textareaRef}
                         autoComplete="off"
                     />
                 </form>

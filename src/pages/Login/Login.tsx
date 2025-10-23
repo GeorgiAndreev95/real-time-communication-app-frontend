@@ -30,7 +30,7 @@ const Login = () => {
             const user = await authenticate(email, password);
             dispatch(setToken(user.token));
             localStorage.setItem("userToken", user.token);
-            navigate("/home");
+            navigate("/");
         } catch (error: unknown) {
             let errorMsg;
 

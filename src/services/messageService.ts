@@ -5,7 +5,7 @@ export const getMessages = async (channelId: number) => {
         const { data } = await axiosInstance.get(
             `/channel/${channelId}/message`
         );
-        return data;
+        return data.messages;
     } catch (error) {
         console.log(error);
         throw error;
@@ -20,8 +20,8 @@ export const createMessage = async (channelId: number, content: string) => {
                 content,
             }
         );
-        console.log(data);
-        return data;
+        console.log(data.message);
+        return data.message;
     } catch (error) {
         console.log(error);
         throw error;

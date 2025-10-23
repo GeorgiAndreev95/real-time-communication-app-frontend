@@ -5,11 +5,13 @@
     height: 100vh;
     background-color: var(--server-backgound);
     color: white;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .channelContentWrapper {
     height: 100%;
+    width: 100%;
     margin-top: 20px;
     border-top: 1px solid #222225;
 }
@@ -88,6 +90,7 @@
     margin: 8px 0;
     color: var(--text-default);
     font-size: 15px;
+    overflow-wrap: break-word;
 }
 
 .groupedContent {
@@ -96,6 +99,7 @@
     margin-top: 8px;
     color: var(--text-default);
     font-size: 15px;
+    overflow-wrap: break-word;
 }
 
 .inputForm {
@@ -107,13 +111,19 @@
 
 .inputField {
     flex: 1;
-    height: 56px;
+    min-width: 0;
+    min-height: 56px;
+    max-height: 200px;
     margin: 0 8px 8px 8px;
     padding: 8px 16px;
     background: #222327;
     border: 1px solid #27282b;
     border-radius: 8px;
     color: white;
+
+    resize: none;
+    overflow-y: auto;
+    overflow-wrap: break-word;
 }
 
 .inputField:focus {
