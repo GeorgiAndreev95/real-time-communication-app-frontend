@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 
 import { FaCirclePlus } from "react-icons/fa6";
+import { TbLogout } from "react-icons/tb";
 
 import type { UserServer } from "../../types";
 import { getUserServers } from "../../services/serverService";
 import { getUserPreference } from "../../services/userPreferenceService";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { setUserServers } from "../../slices/serverSlice";
+import { setToken } from "../../slices/authSlice";
 import classes from "./SideBar.module.css";
 
 type SideBarProps = {
@@ -35,7 +37,7 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
         fetchUserServers();
     }, [dispatch, modalState]);
 
-    const handleServerClick = async (server: UserServer) => {
+    const serverClickHandler = async (server: UserServer) => {
         const serverId = server.serverId;
 
         try {
@@ -53,84 +55,121 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
         }
     };
 
+    const logoutHandler = () => {
+        dispatch(setToken(null));
+        localStorage.removeItem("userToken");
+
+        navigate("/login");
+    };
+
     return (
         <>
             <div className={classes.sideBar}>
-                {userServers && (
-                    <div className={classes.userServers}>
-                        {userServers.map((server: UserServer) => {
-                            const { image, name } = server.server;
-                            const isActive = +serverId! === server.serverId;
+                <div className={classes.topContent}>
+                    {userServers && (
+                        <div className={classes.userServers}>
+                            {userServers.map((server: UserServer) => {
+                                const { image, name } = server.server;
+                                const isActive = +serverId! === server.serverId;
 
-                            return (
-                                <motion.div
-                                    key={server.serverId}
-                                    className={`${classes.userServer} ${
-                                        isActive ? classes.active : ""
-                                    }`}
-                                    onClick={() => handleServerClick(server)}
-                                    initial={false}
-                                    whileHover={isActive ? {} : "hover"}
-                                    animate={isActive ? "active" : "idle"}
-                                >
-                                    <div className={classes.indicatorWrapper}>
-                                        <motion.span
-                                            className={classes.selectIndicator}
-                                            variants={{
-                                                idle: {
-                                                    height: 20,
-                                                    opacity: 0,
-                                                },
-                                                hover: {
-                                                    height: 20,
-                                                    opacity: 1,
-                                                },
-                                                active: {
-                                                    height: 40,
-                                                    opacity: 1,
-                                                },
-                                            }}
-                                            transition={{
-                                                type: "tween",
-                                                ease: "easeOut",
-                                                duration: 0.2,
-                                            }}
-                                        />
-                                    </div>
-                                    <div className={classes.serverWrapper}>
-                                        {!server.server.image ? (
-                                            <div className={classes.serverIcon}>
-                                                {name
-                                                    .split(" ")
-                                                    .map((word) =>
-                                                        word.charAt(0)
-                                                    )}
-                                            </div>
-                                        ) : (
-                                            <img
-                                                src={`http://localhost:3000${image}`}
-                                                alt="Server icon"
+                                return (
+                                    <motion.div
+                                        key={server.serverId}
+                                        className={`${classes.userServer} ${
+                                            isActive ? classes.active : ""
+                                        }`}
+                                        onClick={() =>
+                                            serverClickHandler(server)
+                                        }
+                                        initial={false}
+                                        whileHover={isActive ? {} : "hover"}
+                                        animate={isActive ? "active" : "idle"}
+                                    >
+                                        <div
+                                            className={classes.indicatorWrapper}
+                                        >
+                                            <motion.span
                                                 className={
-                                                    classes.serverIconImg
+                                                    classes.selectIndicator
                                                 }
+                                                variants={{
+                                                    idle: {
+                                                        height: 20,
+                                                        opacity: 0,
+                                                    },
+                                                    hover: {
+                                                        height: 20,
+                                                        opacity: 1,
+                                                    },
+                                                    active: {
+                                                        height: 40,
+                                                        opacity: 1,
+                                                    },
+                                                }}
+                                                transition={{
+                                                    type: "tween",
+                                                    ease: "easeOut",
+                                                    duration: 0.2,
+                                                }}
                                             />
-                                        )}
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
+                                        </div>
+                                        <div className={classes.serverWrapper}>
+                                            {!server.server.image ? (
+                                                <div
+                                                    className={`${
+                                                        classes.serverIcon
+                                                    } ${
+                                                        isActive
+                                                            ? classes.selectedServer
+                                                            : ""
+                                                    }`}
+                                                >
+                                                    {name
+                                                        .split(" ")
+                                                        .map((word) =>
+                                                            word.charAt(0)
+                                                        )}
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={`http://localhost:3000${image}`}
+                                                    alt="Server icon"
+                                                    className={
+                                                        classes.serverIconImg
+                                                    }
+                                                />
+                                            )}
+                                            <span className={classes.tooltip}>
+                                                {name}
+                                            </span>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    )}
+                    <div className={classes.createServer}>
+                        <div className={classes.createButtonWrapper}>
+                            <a
+                                className={classes.createButtonIcon}
+                                onClick={onOpenModal}
+                            >
+                                <FaCirclePlus />
+                                <span className={classes.tooltip}>
+                                    Add a Server
+                                </span>
+                            </a>
+                        </div>
                     </div>
-                )}
-                <div className={classes.createServer}>
-                    <div className={classes.createButtonWrapper}>
+                </div>
+                <div className={classes.logoutButton}>
+                    <div className={classes.logoutButtonWrapper}>
                         <a
-                            className={classes.createButtonIcon}
-                            onClick={onOpenModal}
+                            className={classes.logoutButtonIcon}
+                            onClick={logoutHandler}
                         >
-                            <FaCirclePlus />
-                            <span className={classes.tooltip}>
-                                Add a Server
-                            </span>
+                            <TbLogout />
+                            <span className={classes.tooltip}>Log Out</span>
                         </a>
                     </div>
                 </div>

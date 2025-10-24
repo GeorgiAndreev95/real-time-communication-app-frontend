@@ -27,6 +27,9 @@
     --tooltip-background: #242429;
     --tooltip-border: #2d2d32;
     --server-backgound: #1a1a1e;
+    --icon-color: #aaaab1;
+    --icon-color-hover: #f3f3f3;
+    --icon-hover-background: #29292e;
 }
 
 html,

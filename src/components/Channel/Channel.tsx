@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 
+import { BsThreeDots } from "react-icons/bs";
+
 import type { Message, ServerChannel } from "../../types";
 import { createMessage, getMessages } from "../../services/messageService";
 import { saveUserPreference } from "../../services/userPreferenceService";
@@ -155,12 +157,31 @@ const Channel = () => {
                                 </div>
 
                                 {restMsgs.map((msg) => (
-                                    <p
-                                        key={msg.id}
-                                        className={classes.groupedContent}
-                                    >
-                                        {msg.content}
-                                    </p>
+                                    <div className={classes.singleMessage}>
+                                        <span
+                                            className={`${classes.date} ${classes.hoverTime}`}
+                                        >
+                                            {new Date(
+                                                msg.createdAt
+                                            ).toLocaleString("en-GB", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                        </span>
+                                        <div className={classes.groupedContent}>
+                                            <p
+                                                key={msg.id}
+                                                // className={
+                                                //     classes.groupedContent
+                                                // }
+                                            >
+                                                {msg.content}
+                                            </p>
+                                            <div className={classes.moreButton}>
+                                                <BsThreeDots />
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         );

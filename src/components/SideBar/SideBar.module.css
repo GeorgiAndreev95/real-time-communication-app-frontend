@@ -1,17 +1,25 @@
 .sideBar {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 72px;
+    justify-content: space-between;
     height: 100vh;
     background: var(--background-default);
+    padding: 20px 0;
+}
+
+.topContent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 72px;
+    /* height: 100vh; */
 }
 
 .userServers {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 .userServer {
@@ -22,6 +30,11 @@
 .userServer:hover .serverIcon,
 .createServer:hover .createButtonIcon {
     background: var(--button-background);
+}
+
+.logoutButton:hover .logoutButtonIcon {
+    background: rgba(255, 180, 180, 0.85);
+    color: rgb(187, 0, 0);
 }
 
 .indicatorWrapper {
@@ -41,7 +54,8 @@
 }
 
 .serverWrapper,
-.createServer {
+.createServer,
+.logoutButton {
     position: relative;
     display: flex;
     justify-content: center;
@@ -63,8 +77,13 @@
     transition: 0.2s ease-in-out;
 }
 
+.selectedServer {
+    background-color: var(--button-background);
+}
+
 .serverIcon:focus,
-.createButtonIcon:focus {
+.createButtonIcon:focus,
+.logoutButtonIcon:focus {
     outline: none;
 }
 
@@ -75,7 +94,8 @@
     background: none;
 }
 
-.createButtonIcon {
+.createButtonIcon,
+.logoutButtonIcon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -126,8 +146,9 @@
     border-top: 1px solid var(--tooltip-border);
 }
 
-.serverIcon:hover .tooltip,
-.createButtonIcon:hover .tooltip {
+.serverWrapper:hover .tooltip,
+.createButtonIcon:hover .tooltip,
+.logoutButtonIcon:hover .tooltip {
     opacity: 1;
     animation: popUp 0.2s ease-in-out;
 }
