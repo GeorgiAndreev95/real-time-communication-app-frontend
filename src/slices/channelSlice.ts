@@ -19,9 +19,30 @@ export const channelSlice = createSlice({
         addChannelMessage: (state, action) => {
             state.channelMessages.push(action.payload);
         },
+        editChannelMessage: (state, action) => {
+            const index = state.channelMessages.findIndex(
+                (msg) => msg.id === action.payload.id
+            );
+            if (index !== -1) {
+                state.channelMessages[index] = {
+                    ...state.channelMessages[index],
+                    ...action.payload,
+                };
+            }
+        },
+        deleteChannelMessage: (state, action) => {
+            state.channelMessages = state.channelMessages.filter(
+                (msg) => msg.id !== action.payload
+            );
+        },
     },
 });
 
-export const { setChannelMessages, addChannelMessage } = channelSlice.actions;
+export const {
+    setChannelMessages,
+    addChannelMessage,
+    editChannelMessage,
+    deleteChannelMessage,
+} = channelSlice.actions;
 
 export default channelSlice.reducer;

@@ -47,13 +47,14 @@
 
 .contentWrapper {
     vertical-align: middle;
+    width: 100%;
 }
 
 .usernameAndDate {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin: 8px 0;
+    margin-top: 8px;
 }
 
 .profilePicture {
@@ -88,14 +89,24 @@
 }
 
 .content {
-    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 36px;
+    /* margin: 8px 0; */
     color: var(--text-default);
     font-size: 15px;
     overflow-wrap: break-word;
 }
 
+.content > p {
+    margin: 0;
+}
+
 .singleMessage {
     position: relative;
+    height: 36px;
 }
 
 .singleMessage:hover .hoverTime {
@@ -105,7 +116,10 @@
     left: 22px;
 }
 
-.singleMessage:hover .moreButton {
+.singleMessage:hover .deleteButton,
+.singleMessage:hover .editButton,
+.messageHeader:hover .deleteButton,
+.messageHeader:hover .editButton {
     display: flex;
 }
 
@@ -113,6 +127,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
     /* line-height: 1.5; */
     padding: 8px 16px 8px 68px; /* aligns with text under avatar */
     margin: 0;
@@ -121,21 +136,29 @@
     overflow-wrap: break-word;
 }
 
-.groupedContent > p {
-    margin: 0;
+.buttonsWrapper {
+    display: flex;
+    gap: 5px;
 }
 
-.moreButton {
+.deleteButton,
+.editButton {
     display: none;
-    scale: 1.3;
-    padding: 1px;
+    scale: 1;
+    padding: 5px;
     color: var(--icon-color);
     border-radius: 4px;
 }
 
-.moreButton:hover {
+.editButton:hover {
     color: var(--icon-color-hover);
     background-color: var(--icon-hover-background);
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background: #35292d;
+    color: #f16f6c;
     cursor: pointer;
 }
 

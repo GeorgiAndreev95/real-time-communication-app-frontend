@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
+import { jwtDecode } from "jwt-decode";
 
-import { BsThreeDots } from "react-icons/bs";
+import { FaTrashCan, FaPen } from "react-icons/fa6";
 
 import type { Message, ServerChannel } from "../../types";
-import { createMessage, getMessages } from "../../services/messageService";
+import {
+    createMessage,
+    getMessages,
+    deleteMessage,
+} from "../../services/messageService";
 import { saveUserPreference } from "../../services/userPreferenceService";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { useSocket } from "../../hooks/useSocket";
-import { setChannelMessages } from "../../slices/channelSlice";
+import {
+    deleteChannelMessage,
+    setChannelMessages,
+} from "../../slices/channelSlice";
 import classes from "./Channel.module.css";
 
 const Channel = () => {
@@ -17,12 +25,24 @@ const Channel = () => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { serverId, channelId } = useParams();
     const messages = useAppSelector((state) => state.channel.channelMessages);
+    const token = useAppSelector((state) => state.auth.token);
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
+
+    let currentUserId: number | null = null;
+
+    if (token) {
+        try {
+            const decoded: { id: number } = jwtDecode(token);
+            currentUserId = decoded.id;
+        } catch (err) {
+            console.error("Invalid token:", err);
+        }
+    }
 
     useSocket(+channelId!);
 
@@ -63,14 +83,22 @@ const Channel = () => {
 
             textarea.style.height = textarea.scrollHeight + "px";
 
-            // Optional: If you want to limit the growth, you can check:
-            const maxHeight = 200; // e.g. 200 pixels
+            const maxHeight = 200;
             if (textarea.scrollHeight > maxHeight) {
-                textarea.style.overflowY = "auto"; // Re-enable scrolling when max height is hit
+                textarea.style.overflowY = "auto";
                 textarea.style.height = maxHeight + "px";
             } else {
-                textarea.style.overflowY = "hidden"; // Keep scrollbar hidden while growing
+                textarea.style.overflowY = "hidden";
             }
+        }
+    };
+
+    const onDeleteHandler = async (messageId: number) => {
+        try {
+            await deleteMessage(messageId);
+            dispatch(deleteChannelMessage(messageId));
+        } catch (error) {
+            console.error("Failed to delete message:", error);
         }
     };
 
@@ -117,7 +145,7 @@ const Channel = () => {
                 </div>
                 <div className={classes.messagesContainer}>
                     {groupMessages(messages).map((group, groupIndex) => {
-                        const firstMsg = group.messages[0].content;
+                        const firstMsg = group.messages[0];
                         const restMsgs = group.messages.slice(1);
                         return (
                             <div
@@ -150,14 +178,45 @@ const Channel = () => {
                                                 })}
                                             </div>
                                         </div>
-                                        <p className={classes.content}>
-                                            {firstMsg}
-                                        </p>
+                                        <div className={classes.content}>
+                                            <p>{firstMsg.content}</p>
+                                            {firstMsg.sender.id ===
+                                                currentUserId && (
+                                                <div
+                                                    className={
+                                                        classes.buttonsWrapper
+                                                    }
+                                                >
+                                                    <div
+                                                        className={
+                                                            classes.editButton
+                                                        }
+                                                    >
+                                                        <FaPen />
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            classes.deleteButton
+                                                        }
+                                                        onClick={() =>
+                                                            onDeleteHandler(
+                                                                firstMsg.id
+                                                            )
+                                                        }
+                                                    >
+                                                        <FaTrashCan />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 {restMsgs.map((msg) => (
-                                    <div className={classes.singleMessage}>
+                                    <div
+                                        className={classes.singleMessage}
+                                        key={msg.id}
+                                    >
                                         <span
                                             className={`${classes.date} ${classes.hoverTime}`}
                                         >
@@ -169,17 +228,35 @@ const Channel = () => {
                                             })}
                                         </span>
                                         <div className={classes.groupedContent}>
-                                            <p
-                                                key={msg.id}
-                                                // className={
-                                                //     classes.groupedContent
-                                                // }
-                                            >
-                                                {msg.content}
-                                            </p>
-                                            <div className={classes.moreButton}>
-                                                <BsThreeDots />
-                                            </div>
+                                            <p key={msg.id}>{msg.content}</p>
+                                            {msg.sender.id ===
+                                                currentUserId && (
+                                                <div
+                                                    className={
+                                                        classes.buttonsWrapper
+                                                    }
+                                                >
+                                                    <div
+                                                        className={
+                                                            classes.editButton
+                                                        }
+                                                    >
+                                                        <FaPen />
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            classes.deleteButton
+                                                        }
+                                                        onClick={() =>
+                                                            onDeleteHandler(
+                                                                msg.id
+                                                            )
+                                                        }
+                                                    >
+                                                        <FaTrashCan />
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
