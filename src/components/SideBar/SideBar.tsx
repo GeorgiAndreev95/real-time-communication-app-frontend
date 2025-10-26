@@ -10,7 +10,7 @@ import type { UserServer } from "../../types";
 import { getUserServers } from "../../services/serverService";
 import { getUserPreference } from "../../services/userPreferenceService";
 import { setUserServers } from "../../slices/serverSlice";
-import { setToken } from "../../slices/authSlice";
+import { setUser } from "../../slices/authSlice";
 import classes from "./SideBar.module.css";
 
 type SideBarProps = {
@@ -29,6 +29,7 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
             try {
                 const data = await getUserServers();
                 dispatch(setUserServers(data.userServers));
+                console.log(data.userServers);
             } catch (error) {
                 console.error("Error fetching servers:", error);
             }
@@ -43,9 +44,10 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
         try {
             let lastChannelId = await getUserPreference(serverId);
 
-            if (!lastChannelId && server.server.channels?.length) {
-                lastChannelId = server.server.channels[0].id;
-            }
+            lastChannelId =
+                lastChannelId ??
+                server.server.preferences?.[0]?.lastChannelId ??
+                null;
 
             if (lastChannelId) {
                 navigate(`/channels/${serverId}/${lastChannelId}`);
@@ -56,8 +58,8 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     };
 
     const logoutHandler = () => {
-        dispatch(setToken(null));
-        localStorage.removeItem("userToken");
+        dispatch(setUser(null));
+        localStorage.removeItem("user");
 
         navigate("/login");
     };

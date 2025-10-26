@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { jwtDecode } from "jwt-decode";
 
 import { FaTrashCan, FaPen } from "react-icons/fa6";
 
@@ -22,27 +21,17 @@ import classes from "./Channel.module.css";
 const Channel = () => {
     const dispatch = useAppDispatch();
     const [content, setContent] = useState("");
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const textareaRef = useRef<HTMLInputElement>(null);
     const { serverId, channelId } = useParams();
     const messages = useAppSelector((state) => state.channel.channelMessages);
-    const token = useAppSelector((state) => state.auth.token);
+    const user = useAppSelector((state) => state.auth.user);
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
-
-    let currentUserId: number | null = null;
-
-    if (token) {
-        try {
-            const decoded: { id: number } = jwtDecode(token);
-            currentUserId = decoded.id;
-        } catch (err) {
-            console.error("Invalid token:", err);
-        }
-    }
+    const currentUserId = user.id;
 
     useSocket(+channelId!);
 
@@ -102,7 +91,7 @@ const Channel = () => {
         }
     };
 
-    const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setContent(event.target.value);
         autoGrow();
     };
@@ -122,10 +111,17 @@ const Channel = () => {
         const fetchMessagesAndSavePref = async () => {
             if (!serverId || !channelId) return;
 
-            const channelMessages = await getMessages(+channelId!);
-            dispatch(setChannelMessages(channelMessages));
+            try {
+                const channelMessages = await getMessages(+channelId!);
+                dispatch(setChannelMessages(channelMessages));
 
-            saveUserPreference(+serverId!, +channelId).catch(console.error);
+                await saveUserPreference(+serverId!, +channelId!);
+            } catch (err) {
+                console.error(
+                    "Error loading channel or saving preference:",
+                    err
+                );
+            }
         };
 
         fetchMessagesAndSavePref();
@@ -147,6 +143,21 @@ const Channel = () => {
                     {groupMessages(messages).map((group, groupIndex) => {
                         const firstMsg = group.messages[0];
                         const restMsgs = group.messages.slice(1);
+                        const date = new Date(
+                            group.messages[0].createdAt
+                        ).toLocaleString("en-GB", {
+                            year: "2-digit",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                        });
+
+                        // // const currentUserRole = currentUserMembership.roleId;
+                        // const canEdit =
+                        //     currentUserRole === 1 || currentUserRole === 2;
+
                         return (
                             <div
                                 key={groupIndex}
@@ -166,16 +177,7 @@ const Channel = () => {
                                                 {group.sender.username}
                                             </div>
                                             <div className={classes.date}>
-                                                {new Date(
-                                                    group.messages[0].createdAt
-                                                ).toLocaleString("en-GB", {
-                                                    year: "2-digit",
-                                                    month: "2-digit",
-                                                    day: "2-digit",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                })}
+                                                {date}
                                             </div>
                                         </div>
                                         <div className={classes.content}>
@@ -212,61 +214,71 @@ const Channel = () => {
                                     </div>
                                 </div>
 
-                                {restMsgs.map((msg) => (
-                                    <div
-                                        className={classes.singleMessage}
-                                        key={msg.id}
-                                    >
-                                        <span
-                                            className={`${classes.date} ${classes.hoverTime}`}
+                                {restMsgs.map((msg) => {
+                                    const timePosted = new Date(
+                                        msg.createdAt
+                                    ).toLocaleString("en-GB", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    });
+
+                                    return (
+                                        <div
+                                            className={classes.singleMessage}
+                                            key={msg.id}
                                         >
-                                            {new Date(
-                                                msg.createdAt
-                                            ).toLocaleString("en-GB", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </span>
-                                        <div className={classes.groupedContent}>
-                                            <p key={msg.id}>{msg.content}</p>
-                                            {msg.sender.id ===
-                                                currentUserId && (
-                                                <div
-                                                    className={
-                                                        classes.buttonsWrapper
-                                                    }
-                                                >
+                                            <span
+                                                className={`${classes.date} ${classes.hoverTime}`}
+                                            >
+                                                {timePosted}
+                                            </span>
+                                            <div
+                                                className={
+                                                    classes.groupedContent
+                                                }
+                                            >
+                                                <p key={msg.id}>
+                                                    {msg.content}
+                                                </p>
+                                                {msg.sender.id ===
+                                                    currentUserId && (
                                                     <div
                                                         className={
-                                                            classes.editButton
+                                                            classes.buttonsWrapper
                                                         }
                                                     >
-                                                        <FaPen />
+                                                        <div
+                                                            className={
+                                                                classes.editButton
+                                                            }
+                                                        >
+                                                            <FaPen />
+                                                        </div>
+                                                        <div
+                                                            className={
+                                                                classes.deleteButton
+                                                            }
+                                                            onClick={() =>
+                                                                onDeleteHandler(
+                                                                    msg.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaTrashCan />
+                                                        </div>
                                                     </div>
-                                                    <div
-                                                        className={
-                                                            classes.deleteButton
-                                                        }
-                                                        onClick={() =>
-                                                            onDeleteHandler(
-                                                                msg.id
-                                                            )
-                                                        }
-                                                    >
-                                                        <FaTrashCan />
-                                                    </div>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         );
                     })}
                 </div>
 
                 <form className={classes.inputForm} onSubmit={onSubmitHandler}>
-                    <textarea
+                    <input
                         className={classes.inputField}
                         name="content"
                         required

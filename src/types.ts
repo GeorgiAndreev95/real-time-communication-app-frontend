@@ -8,9 +8,12 @@ export type UserServer = {
         id: number;
         image: string | null;
         name: string;
-        channels: {
-            id: number;
-            name: string;
+        preferences?: {
+            lastChannelId: number;
+            lastChannel: {
+                id: number;
+                name: string;
+            } | null;
         }[];
     };
 };
@@ -30,5 +33,9 @@ export type Message = {
         id: number;
         profilePicture: string;
         username: string;
+        memberships: {
+            roleId: number;
+            serverId: number;
+        }[];
     };
 };

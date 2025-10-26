@@ -1,10 +1,10 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router";
 import axios from "axios";
 
-import { useAppDispatch } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { authenticate } from "../../services/authenticationService";
-import { setToken } from "../../slices/authSlice";
+import { setUser } from "../../slices/authSlice";
 import classes from "./Login.module.css";
 
 const Login = () => {
@@ -15,21 +15,21 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
-    // const token = useAppSelector((state) => state.auth.token);
+    const user = useAppSelector((state) => state.auth.user);
 
-    // useEffect(() => {
-    //     if (token) {
-    //         navigate("/home");
-    //     }
-    // }, [navigate, token]);
+    useEffect(() => {
+        if (user) {
+            navigate("/");
+        }
+    }, [navigate, user]);
 
     const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         try {
             const user = await authenticate(email, password);
-            dispatch(setToken(user.token));
-            localStorage.setItem("userToken", user.token);
+            dispatch(setUser(user));
+            localStorage.setItem("user", JSON.stringify(user));
             navigate("/");
         } catch (error: unknown) {
             let errorMsg;
