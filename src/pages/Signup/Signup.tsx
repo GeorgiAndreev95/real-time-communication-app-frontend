@@ -1,7 +1,7 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
-// import { useAppSelector } from "../../hooks/reduxHooks";
+import { useAppSelector } from "../../hooks/reduxHooks";
 import axios from "axios";
 
 import { signup } from "../../services/authenticationService";
@@ -19,13 +19,13 @@ const Signup = () => {
     const [successMsg, setSuccessMsg] = useState("");
     const [errors, setErrors] = useState<{ path: string; msg: string }[]>([]);
 
-    // const token = useAppSelector((state) => state.auth.token);
+    const user = useAppSelector((state) => state.auth.user);
 
-    // useEffect(() => {
-    //     if (token) {
-    //         navigate("/home");
-    //     }
-    // }, [navigate, token]);
+    useEffect(() => {
+        if (user) {
+            navigate("/home");
+        }
+    }, [navigate, user]);
 
     const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>
         setEmail(event.target.value);

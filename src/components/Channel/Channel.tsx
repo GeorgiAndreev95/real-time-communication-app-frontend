@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 
 import { FaTrashCan, FaPen } from "react-icons/fa6";
 
-import type { Message, ServerChannel } from "../../types";
+import type { Message, ServerChannel, UserServer } from "../../types";
 import {
     createMessage,
     getMessages,
@@ -20,14 +20,27 @@ import classes from "./Channel.module.css";
 
 const Channel = () => {
     const dispatch = useAppDispatch();
-    const [content, setContent] = useState("");
-    const textareaRef = useRef<HTMLInputElement>(null);
     const { serverId, channelId } = useParams();
+
+    const [content, setContent] = useState("");
+    const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
+
+    const textareaRef = useRef<HTMLInputElement>(null);
+    const dialogRef = useRef<HTMLDialogElement>(null);
     const messages = useAppSelector((state) => state.channel.channelMessages);
     const user = useAppSelector((state) => state.auth.user);
+    const userServers: UserServer[] = useAppSelector(
+        (state) => state.server.userServers
+    );
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
+
+    const selectedServer = userServers?.find(
+        (server) => server.serverId === +channelId!
+    );
+    const userRole = selectedServer?.roleId;
+    const canEdit = userRole === 1 || userRole === 2;
     const selectedChannel = channels?.find(
         (channel) => channel.id === +channelId!
     );
@@ -82,10 +95,17 @@ const Channel = () => {
         }
     };
 
+    const handleDeleteClick = (messageId: number) => {
+        setMessageToDelete(messageId);
+        dialogRef.current?.showModal();
+    };
+
     const onDeleteHandler = async (messageId: number) => {
         try {
             await deleteMessage(messageId);
             dispatch(deleteChannelMessage(messageId));
+            setMessageToDelete(null);
+            dialogRef.current?.close();
         } catch (error) {
             console.error("Failed to delete message:", error);
         }
@@ -154,10 +174,6 @@ const Channel = () => {
                             second: "2-digit",
                         });
 
-                        // // const currentUserRole = currentUserMembership.roleId;
-                        // const canEdit =
-                        //     currentUserRole === 1 || currentUserRole === 2;
-
                         return (
                             <div
                                 key={groupIndex}
@@ -182,8 +198,9 @@ const Channel = () => {
                                         </div>
                                         <div className={classes.content}>
                                             <p>{firstMsg.content}</p>
-                                            {firstMsg.sender.id ===
-                                                currentUserId && (
+                                            {(firstMsg.sender.id ===
+                                                currentUserId ||
+                                                canEdit) && (
                                                 <div
                                                     className={
                                                         classes.buttonsWrapper
@@ -201,7 +218,7 @@ const Channel = () => {
                                                             classes.deleteButton
                                                         }
                                                         onClick={() =>
-                                                            onDeleteHandler(
+                                                            handleDeleteClick(
                                                                 firstMsg.id
                                                             )
                                                         }
@@ -259,7 +276,7 @@ const Channel = () => {
                                                                 classes.deleteButton
                                                             }
                                                             onClick={() =>
-                                                                onDeleteHandler(
+                                                                handleDeleteClick(
                                                                     msg.id
                                                                 )
                                                             }
@@ -289,6 +306,28 @@ const Channel = () => {
                         autoComplete="off"
                     />
                 </form>
+
+                <dialog ref={dialogRef}>
+                    <div className={classes.dialogText}>
+                        <h3>Delete Message</h3>
+                        <p>Are you sure you want to delete this message?</p>
+                    </div>
+
+                    <div className={classes.dialogButtons}>
+                        <button
+                            className={classes.cancelBtn}
+                            onClick={() => dialogRef.current?.close()}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className={classes.confirmBtn}
+                            onClick={() => onDeleteHandler(messageToDelete!)}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </dialog>
             </div>
         </div>
     );
