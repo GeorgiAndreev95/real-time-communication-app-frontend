@@ -23,8 +23,11 @@ const Channel = () => {
     const { serverId, channelId } = useParams();
 
     const [content, setContent] = useState("");
-    const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
+    const [messageToDelete, setMessageToDelete] = useState<Message | null>(
+        null
+    );
 
+    let date;
     const textareaRef = useRef<HTMLInputElement>(null);
     const dialogRef = useRef<HTMLDialogElement>(null);
     const messages = useAppSelector((state) => state.channel.channelMessages);
@@ -95,8 +98,8 @@ const Channel = () => {
         }
     };
 
-    const handleDeleteClick = (messageId: number) => {
-        setMessageToDelete(messageId);
+    const handleDeleteClick = (message: Message) => {
+        setMessageToDelete(message);
         dialogRef.current?.showModal();
     };
 
@@ -163,7 +166,7 @@ const Channel = () => {
                     {groupMessages(messages).map((group, groupIndex) => {
                         const firstMsg = group.messages[0];
                         const restMsgs = group.messages.slice(1);
-                        const date = new Date(
+                        date = new Date(
                             group.messages[0].createdAt
                         ).toLocaleString("en-GB", {
                             year: "2-digit",
@@ -219,7 +222,7 @@ const Channel = () => {
                                                         }
                                                         onClick={() =>
                                                             handleDeleteClick(
-                                                                firstMsg.id
+                                                                firstMsg
                                                             )
                                                         }
                                                     >
@@ -277,7 +280,7 @@ const Channel = () => {
                                                             }
                                                             onClick={() =>
                                                                 handleDeleteClick(
-                                                                    msg.id
+                                                                    msg
                                                                 )
                                                             }
                                                         >
@@ -313,6 +316,29 @@ const Channel = () => {
                         <p>Are you sure you want to delete this message?</p>
                     </div>
 
+                    {messageToDelete && (
+                        <div className={classes.deleteMessageHeader}>
+                            <img
+                                className={classes.profilePicture}
+                                src={`http://localhost:3000${
+                                    messageToDelete!.sender.profilePicture
+                                }`}
+                                alt={messageToDelete!.sender.username}
+                            />
+                            <div className={classes.contentWrapper}>
+                                <div className={classes.usernameAndDate}>
+                                    <div className={classes.username}>
+                                        {messageToDelete!.sender.username}
+                                    </div>
+                                    <div className={classes.date}>{date}</div>
+                                </div>
+                                <div className={classes.content}>
+                                    <p>{messageToDelete!.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className={classes.dialogButtons}>
                         <button
                             className={classes.cancelBtn}
@@ -322,7 +348,7 @@ const Channel = () => {
                         </button>
                         <button
                             className={classes.confirmBtn}
-                            onClick={() => onDeleteHandler(messageToDelete!)}
+                            onClick={() => onDeleteHandler(messageToDelete!.id)}
                         >
                             Delete
                         </button>

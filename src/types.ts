@@ -24,18 +24,20 @@ export type ServerChannel = {
     serverId: number;
 };
 
+export type Sender = {
+    id: number;
+    profilePicture: string;
+    username: string;
+    memberships: {
+        roleId: number;
+        serverId: number;
+    }[];
+};
+
 export type Message = {
     id: number;
     content: string;
     createdAt: string;
     updatedAt: string;
-    sender: {
-        id: number;
-        profilePicture: string;
-        username: string;
-        memberships: {
-            roleId: number;
-            serverId: number;
-        }[];
-    };
+    sender: Sender;
 };
