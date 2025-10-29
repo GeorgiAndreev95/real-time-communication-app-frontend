@@ -12,19 +12,50 @@
     border-top: 1px solid #222225;
     border-left: 1px solid #222225;
     border-radius: 12px 0 0 0;
+    overflow: hidden;
 }
 
 .serverName {
     display: flex;
+    position: relative;
+    justify-content: space-between;
     align-items: center;
     height: 50px;
     color: white;
     border-bottom: 1px solid #222225;
+    padding: 0 20px;
+}
+
+.serverName:hover {
+    background-color: var(--server-icon-background);
+    cursor: pointer;
 }
 
 .serverName > p {
     font-weight: 450;
-    padding: 16px 20px;
+    padding: 16px 0;
+}
+
+.openMenuIcon {
+    color: var(--icon-color);
+    scale: 1.5;
+}
+
+.dropdownMenu {
+    position: absolute;
+    z-index: 10;
+    width: 80%;
+    background: #28282d;
+    border: 1px solid #35353b;
+    border-radius: 8px;
+    color: white;
+    top: 55px;
+}
+
+.createChannelBtn {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px;
 }
 
 .channelsContainer {
