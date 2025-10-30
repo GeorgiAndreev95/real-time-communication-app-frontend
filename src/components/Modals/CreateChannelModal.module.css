@@ -1,0 +1,145 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--tooltip-background, #242429);
+    color: #fff;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    width: 420px;
+    animation: slideUp 0.25s ease-out;
+}
+
+.textWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 24px 0 24px;
+}
+
+.textWrapper > p {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.25;
+}
+
+.formWrapper {
+    width: 100%;
+    margin: 16px 0;
+    padding: 8px 24px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.formGroup label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.formGroup input {
+    height: 40px;
+    padding: 1px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    background: #1e1f22;
+    color: white;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border: 1px solid var(--button-background);
+    box-shadow: 0 0 0 1px var(--button-background);
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.modalActions button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.submitBtn {
+    height: 40px;
+    background: var(--button-background);
+    color: white;
+    border: 1px solid var(--button-border);
+    transition: 0.2s ease-in-out;
+}
+
+.submitBtn:hover {
+    background: var(--button-background-hover);
+    border: 1px solid var(--button-border-hover);
+}
+
+.cancelBtn {
+    height: 40px;
+    background: var(--tooltip-border);
+    border: 1px solid #323236;
+    color: white;
+    transition: 0.2s ease-in-out;
+}
+
+.cancelBtn:hover {
+    background: #36363c;
+    border: 1px solid #3a3a40;
+}
+
+.cancelBtn:focus,
+.submitBtn:focus {
+    outline: none;
+}
+
+.disabled {
+    pointer-events: none;
+    border: 1px solid #454b8e;
+    background: #3e458d;
+    color: #8d8e93;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

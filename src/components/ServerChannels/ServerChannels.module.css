@@ -15,9 +15,12 @@
     overflow: hidden;
 }
 
+.serverNameWrapper {
+    position: relative;
+}
+
 .serverName {
     display: flex;
-    position: relative;
     justify-content: space-between;
     align-items: center;
     height: 50px;
@@ -41,21 +44,51 @@
     scale: 1.5;
 }
 
-.dropdownMenu {
+.dropdownMenuWrapper {
+    display: flex;
+    justify-content: center;
     position: absolute;
-    z-index: 10;
-    width: 80%;
+    width: 100%;
+    top: 55px;
+}
+
+.dropdownMenu {
+    height: 200px;
+    width: 70%;
     background: #28282d;
     border: 1px solid #35353b;
     border-radius: 8px;
     color: white;
-    top: 55px;
+    padding: 8px 0;
 }
 
 .createChannelBtn {
     display: flex;
     justify-content: space-between;
-    padding: 8px 16px;
+    align-items: center;
+    height: 40px;
+    width: 90%;
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.createChannelBtn:hover {
+    background-color: #313135;
+}
+
+.createChannelBtn > p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.createChannelIcon {
+    color: var(--icon-color);
+}
+
+.createChannelBtn:hover .createChannelIcon {
+    color: white;
 }
 
 .channelsContainer {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import SideBar from "../../components/SideBar/SideBar";
-import CreateServerModal from "../../components/CreateServerModal/CreateServerModal";
+import CreateServerModal from "../../components/Modals/CreateServerModal";
 import classes from "./MainPage.module.css";
 import { Outlet } from "react-router";
 
