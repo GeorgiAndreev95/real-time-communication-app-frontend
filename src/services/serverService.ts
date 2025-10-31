@@ -31,3 +31,14 @@ export const createServer = async (name: string, image: File | null) => {
         throw error;
     }
 };
+
+export const deleteServer = async (id: number) => {
+    try {
+        const { data } = await axiosInstance.delete(`/server/${id}`);
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

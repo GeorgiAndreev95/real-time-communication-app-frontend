@@ -53,6 +53,9 @@
 }
 
 .dropdownMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     height: 200px;
     width: 70%;
     background: #28282d;
@@ -62,7 +65,8 @@
     padding: 8px 0;
 }
 
-.createChannelBtn {
+.dropdownBtn,
+.dropdownDeleteBtn {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -72,23 +76,38 @@
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
+    transition: 0.2s ease-in-out;
 }
 
-.createChannelBtn:hover {
+.dropdownBtn:hover {
     background-color: #313135;
 }
 
-.createChannelBtn > p {
+.dropdownBtn > p,
+.dropdownDeleteBtn > p {
     font-size: 14px;
     margin: 0;
 }
 
 .createChannelIcon {
     color: var(--icon-color);
+    transition: 0.2s ease-in-out;
 }
 
-.createChannelBtn:hover .createChannelIcon {
+.dropdownBtn:hover .createChannelIcon {
     color: white;
+}
+
+.dropdownDeleteBtn {
+    color: #f57976;
+}
+
+.dropdownDeleteBtn:hover {
+    background-color: rgba(33, 21, 22, 0.5);
+}
+
+.deleteServerIcon {
+    color: #f57976;
 }
 
 .channelsContainer {

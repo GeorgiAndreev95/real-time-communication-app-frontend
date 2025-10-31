@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router";
 import { motion } from "motion/react";
 
 import { MdKeyboardArrowDown, MdClose } from "react-icons/md";
-import { FaCirclePlus } from "react-icons/fa6";
+import { FaCirclePlus, FaTrashCan } from "react-icons/fa6";
 
 import type { ServerChannel, UserServer } from "../../types";
 import { useAppDispatch } from "../../hooks/reduxHooks";
@@ -11,16 +11,18 @@ import { setServerChannels } from "../../slices/serverSlice";
 import { getServerChannels } from "../../services/channelService";
 import classes from "./ServerChannels.module.css";
 import CreateChannelModal from "../Modals/CreateChannelModal";
+import DeleteServerModal from "../Modals/DeleteServerModalt";
 
 type ServerChannelProps = {
-    server?: UserServer;
+    server: UserServer;
 };
 
 const ServerChannels = ({ server }: ServerChannelProps) => {
     const dispatch = useAppDispatch();
     const { serverId, channelId } = useParams();
     const [isOpen, setIsOpen] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
+    const [showDeleteServerModal, setShowDeleteServerModal] = useState(false);
     const [channels, setChannels] = useState<ServerChannel[]>([]);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -28,8 +30,13 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         setIsOpen((prev) => !prev);
     };
 
-    const onCloseHandler = () => {
-        setShowModal(false);
+    const onCloseChannelModalHandler = () => {
+        setShowCreateChannelModal(false);
+        setIsOpen(false);
+    };
+
+    const onCloseDeleteModalHandler = () => {
+        setShowDeleteServerModal(false);
         setIsOpen(false);
     };
 
@@ -63,7 +70,7 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         };
 
         fetchChannels();
-    }, [dispatch, serverId, showModal]);
+    }, [dispatch, serverId, showCreateChannelModal]);
 
     return (
         <>
@@ -108,14 +115,27 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                                     }}
                                 >
                                     <div
-                                        className={classes.createChannelBtn}
-                                        onClick={() => setShowModal(true)}
+                                        className={classes.dropdownBtn}
+                                        onClick={() =>
+                                            setShowCreateChannelModal(true)
+                                        }
                                     >
                                         <p>Create Channel</p>
                                         <FaCirclePlus
                                             className={
                                                 classes.createChannelIcon
                                             }
+                                        />
+                                    </div>
+                                    <div
+                                        className={classes.dropdownDeleteBtn}
+                                        onClick={() =>
+                                            setShowDeleteServerModal(true)
+                                        }
+                                    >
+                                        <p>Delete Server</p>
+                                        <FaTrashCan
+                                            className={classes.deleteServerIcon}
                                         />
                                     </div>
                                 </motion.div>
@@ -141,7 +161,15 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                 </div>
             </div>
 
-            {showModal && <CreateChannelModal onClose={onCloseHandler} />}
+            {showCreateChannelModal && (
+                <CreateChannelModal onClose={onCloseChannelModalHandler} />
+            )}
+            {showDeleteServerModal && (
+                <DeleteServerModal
+                    onClose={onCloseDeleteModalHandler}
+                    serverName={server!.server.name}
+                />
+            )}
         </>
     );
 };
