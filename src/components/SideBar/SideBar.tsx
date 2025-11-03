@@ -24,6 +24,8 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     const userServers = useAppSelector((state) => state.server.userServers);
     const { serverId } = useParams<{ serverId: string }>();
 
+    console.log(userServers);
+
     useEffect(() => {
         const fetchUserServers = async () => {
             try {
@@ -39,18 +41,27 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     }, [dispatch, modalState]);
 
     const serverClickHandler = async (server: UserServer) => {
-        const serverId = server.serverId;
+        const selectedServerId = server.serverId;
 
         try {
-            let lastChannelId = await getUserPreference(serverId);
+            let lastChannelId = await getUserPreference(selectedServerId);
 
             lastChannelId =
                 lastChannelId ??
                 server.server.preferences?.[0]?.lastChannelId ??
                 null;
 
+            if (!lastChannelId) {
+                const defaultChannelId = server.server.channels?.[0]?.id;
+                if (defaultChannelId) {
+                    lastChannelId = defaultChannelId;
+                }
+            }
+
             if (lastChannelId) {
-                navigate(`/channels/${serverId}/${lastChannelId}`);
+                navigate(`/channels/${selectedServerId}/${lastChannelId}`);
+            } else {
+                console.warn("No channels available to navigate to");
             }
         } catch (error) {
             console.error("Error navigating to server:", error);

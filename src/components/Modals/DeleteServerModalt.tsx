@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
+import { useAppDispatch } from "../../hooks/reduxHooks";
 import { deleteServer } from "../../services/serverService";
-import classes from "./CreateChannelModal.module.css";
+import { removeUserServer } from "../../slices/serverSlice";
+import classes from "./DeleteServerModal.module.css";
 
 type DeleteUserServer = {
     onClose: () => void;
@@ -10,20 +12,24 @@ type DeleteUserServer = {
 };
 
 const DeleteServerModal = ({ onClose, serverName }: DeleteUserServer) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { serverId } = useParams();
     const [name, setName] = useState("");
-
-    const isMatch = serverName === name;
-    console.log(isMatch);
+    const [errorMsg, setErrorMsg] = useState("");
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        if (!isMatch) return;
+        if (name.trim().toLowerCase() !== serverName.toLowerCase()) {
+            setErrorMsg("You didn't enter the server name correctly");
+            return;
+        }
 
         try {
-            const { data } = await deleteServer(+serverId!);
-            console.log(data);
+            await deleteServer(+serverId!);
+            dispatch(removeUserServer(+serverId!));
+            navigate("/");
         } catch (error) {
             console.error("Error deleting server:", error);
         }
@@ -40,8 +46,10 @@ const DeleteServerModal = ({ onClose, serverName }: DeleteUserServer) => {
                     <div className={classes.warning}>
                         <p>
                             Are you sure you want to delete{" "}
-                            <span>{serverName}</span>? This action cannot be
-                            undone.
+                            <span className={classes.serverName}>
+                                {serverName}
+                            </span>
+                            ? This action cannot be undone.
                         </p>
                     </div>
                 </div>
@@ -57,10 +65,8 @@ const DeleteServerModal = ({ onClose, serverName }: DeleteUserServer) => {
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
-                        {!isMatch && (
-                            <div className={classes.errorMsg}>
-                                You didn't enter the server name correctly
-                            </div>
+                        {errorMsg && (
+                            <div className={classes.errorMsg}>{errorMsg}</div>
                         )}
                     </div>
 

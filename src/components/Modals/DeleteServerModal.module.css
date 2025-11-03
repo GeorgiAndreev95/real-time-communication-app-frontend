@@ -15,7 +15,7 @@
     justify-content: center;
     align-items: center;
     background: var(--tooltip-background, #242429);
-    color: #fff;
+    color: #fbfbfb;
     border: 1px solid var(--input-border);
     border-radius: 8px;
     width: 420px;
@@ -23,19 +23,26 @@
 }
 
 .textWrapper {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px 24px 0 24px;
+    padding: 16px 24px 0 24px;
 }
 
-.textWrapper > p {
-    text-align: center;
+.warning {
     margin-top: 8px;
+    padding: 8px 16px;
     font-size: 14px;
     font-weight: 300;
     line-height: 1.25;
+    color: #c5914d;
+    background-color: #2e2926;
+    border: 1px solid #382e23;
+    border-radius: 8px;
+}
+
+.serverName {
+    font-weight: bold;
 }
 
 .formWrapper {
@@ -74,8 +81,9 @@
 }
 
 .errorMsg {
+    margin: 8px 0;
     font-size: 12px;
-    color: var(--text-warning);
+    color: #f57976;
 }
 
 .modalActions {
@@ -93,15 +101,15 @@
 
 .submitBtn {
     height: 40px;
-    background: var(--button-background);
+    background: #d22d39;
     color: white;
-    border: 1px solid var(--button-border);
+    border: 1px solid #d63d49;
     transition: 0.2s ease-in-out;
 }
 
 .submitBtn:hover {
-    background: var(--button-background-hover);
-    border: 1px solid var(--button-border-hover);
+    background: #bc2934;
+    border: 1px solid #c13a44;
 }
 
 .cancelBtn {
@@ -124,8 +132,8 @@
 
 .disabled {
     pointer-events: none;
-    border: 1px solid #454b8e;
-    background: #3e458d;
+    border: 1px solid #8a3036;
+    background: #742b2f;
     color: #8d8e93;
 }
 
