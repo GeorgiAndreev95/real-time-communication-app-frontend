@@ -3,12 +3,18 @@ import { Link, useParams } from "react-router";
 import { motion } from "motion/react";
 
 import { MdKeyboardArrowDown, MdClose } from "react-icons/md";
-import { FaCirclePlus, FaTrashCan } from "react-icons/fa6";
+import { FaCirclePlus, FaTrashCan, FaPen } from "react-icons/fa6";
 
 import type { ServerChannel, UserServer } from "../../types";
 import { useAppDispatch } from "../../hooks/reduxHooks";
-import { setServerChannels } from "../../slices/serverSlice";
-import { getServerChannels } from "../../services/channelService";
+import {
+    deleteServerChannel,
+    setServerChannels,
+} from "../../slices/serverSlice";
+import {
+    deleteChannel,
+    getServerChannels,
+} from "../../services/channelService";
 import classes from "./ServerChannels.module.css";
 import CreateChannelModal from "../Modals/CreateChannelModal";
 import DeleteServerModal from "../Modals/DeleteServerModalt";
@@ -24,7 +30,11 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
     const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
     const [showDeleteServerModal, setShowDeleteServerModal] = useState(false);
     const [channels, setChannels] = useState<ServerChannel[]>([]);
+    const [channelToDelete, setChannelToDelete] =
+        useState<ServerChannel | null>(null);
+
     const dropdownRef = useRef<HTMLDivElement | null>(null);
+    const dialogRef = useRef<HTMLDialogElement>(null);
 
     const onDropdownClickHandler = () => {
         setIsOpen((prev) => !prev);
@@ -38,6 +48,27 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
     const onCloseDeleteModalHandler = () => {
         setShowDeleteServerModal(false);
         setIsOpen(false);
+    };
+
+    const handleDeleteClick = (channel: ServerChannel) => {
+        setChannelToDelete(channel);
+        dialogRef.current?.showModal();
+    };
+
+    const onDeleteHandler = async (channelId: number) => {
+        try {
+            await deleteChannel(channelId);
+            dispatch(deleteServerChannel(channelId));
+
+            setChannels((prev) =>
+                prev.filter((channel) => channel.id !== channelId)
+            );
+
+            setChannelToDelete(null);
+            dialogRef.current?.close();
+        } catch (error) {
+            console.error("Failed to delete message:", error);
+        }
     };
 
     useEffect(() => {
@@ -145,20 +176,69 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                     <div className={classes.channelsContainer}>
                         {channels.map((channel: ServerChannel) => {
                             const isSelected = +channelId! === channel.id;
+
                             return (
-                                <Link
-                                    key={channel.id}
-                                    to={`${channel.id}`}
-                                    className={`${classes.channelName} ${
-                                        isSelected ? classes.selected : ""
-                                    }`}
-                                >
-                                    {channel.name}
-                                </Link>
+                                <>
+                                    <Link
+                                        key={channel.id}
+                                        to={`${channel.id}`}
+                                        className={`${classes.channelName} ${
+                                            isSelected ? classes.selected : ""
+                                        }`}
+                                    >
+                                        <p>{channel.name}</p>
+                                        <div className={classes.buttonsWrapper}>
+                                            <div className={classes.editButton}>
+                                                <FaPen />
+                                            </div>
+                                            <div
+                                                className={classes.deleteButton}
+                                                onClick={() =>
+                                                    handleDeleteClick(channel)
+                                                }
+                                            >
+                                                <FaTrashCan />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </>
                             );
                         })}
                     </div>
                 </div>
+                <dialog ref={dialogRef}>
+                    {channelToDelete && (
+                        <>
+                            <div className={classes.dialogText}>
+                                <h3>Delete Channel</h3>
+                                <p>
+                                    Are you sure you want to delete{" "}
+                                    <span className={classes.modalChannelName}>
+                                        {channelToDelete!.name}
+                                    </span>
+                                    ? This cannot be undone.
+                                </p>
+                            </div>
+
+                            <div className={classes.dialogButtons}>
+                                <button
+                                    className={classes.cancelBtn}
+                                    onClick={() => dialogRef.current?.close()}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className={classes.confirmBtn}
+                                    onClick={() =>
+                                        onDeleteHandler(channelToDelete.id)
+                                    }
+                                >
+                                    Delete Channel
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </dialog>
             </div>
 
             {showCreateChannelModal && (

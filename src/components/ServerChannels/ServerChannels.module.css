@@ -121,6 +121,7 @@
 .channelName {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
     height: 35px;
     color: #82838b;
@@ -136,4 +137,138 @@
 
 .channelName:focus {
     outline: none;
+}
+
+.channelName:hover .deleteButton,
+.channelName:hover .editButton {
+    display: flex;
+}
+
+.buttonsWrapper {
+    display: flex;
+    gap: 5px;
+}
+
+.deleteButton,
+.editButton {
+    display: none;
+    scale: 1;
+    padding: 5px;
+    color: var(--icon-color);
+    border-radius: 4px;
+}
+
+.editButton:hover {
+    color: var(--icon-color-hover);
+    background-color: var(--icon-hover-background);
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background: #35292d;
+    color: #f16f6c;
+    cursor: pointer;
+}
+
+/* Dialog modal styling */
+
+dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #323237;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    background-color: var(--tooltip-background);
+    color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    width: 480px;
+    max-width: 90%;
+    position: relative;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+dialog:not([open]) {
+    display: none;
+}
+
+dialog[open] {
+    opacity: 1;
+    transform: scale(1);
+    animation: modalFadeIn 0.2s ease;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(2px);
+}
+
+.dialogText {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.dialogText > p {
+    color: var(--icon-color);
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.modalChannelName {
+    font-weight: bold;
+}
+
+.dialogButtons {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.cancelBtn,
+.confirmBtn {
+    flex: 1;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 400;
+    padding: 0.5rem 1rem;
+}
+
+.cancelBtn {
+    background-color: var(--tooltip-border);
+    color: white;
+    border: 1px solid #323236;
+    transition: background-color 0.15s ease;
+}
+
+.cancelBtn:hover {
+    background-color: #36363c;
+    border: 1px solid #3a3a40;
+}
+
+.confirmBtn {
+    background-color: #d22d39;
+    color: white;
+    border: 1px solid #d63d49;
+}
+
+.confirmBtn:hover {
+    background-color: #bc2934;
+    border: 1px solid #c13a44;
+}
+
+dialog:focus,
+.cancelBtn:focus,
+.confirmBtn {
+    outline: none;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }

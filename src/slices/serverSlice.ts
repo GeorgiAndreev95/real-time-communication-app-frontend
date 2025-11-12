@@ -26,10 +26,19 @@ export const serverSlice = createSlice({
                 (s) => s.serverId !== action.payload
             );
         },
+        deleteServerChannel: (state, action) => {
+            state.serverChannels = state.serverChannels.filter(
+                (channel) => channel.id !== action.payload
+            );
+        },
     },
 });
 
-export const { setUserServers, setServerChannels, removeUserServer } =
-    serverSlice.actions;
+export const {
+    setUserServers,
+    setServerChannels,
+    removeUserServer,
+    deleteServerChannel,
+} = serverSlice.actions;
 
 export default serverSlice.reducer;

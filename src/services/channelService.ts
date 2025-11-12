@@ -44,7 +44,7 @@ export const updateChannel = async (channelId: string, name: string) => {
     }
 };
 
-export const deleteChannel = async (channelId: string) => {
+export const deleteChannel = async (channelId: number) => {
     try {
         const response = await axiosInstance.delete(
             `server/channel/${channelId}`
