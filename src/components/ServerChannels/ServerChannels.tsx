@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
 
 import { MdKeyboardArrowDown, MdClose } from "react-icons/md";
 import { FaCirclePlus, FaTrashCan, FaPen } from "react-icons/fa6";
 
 import type { ServerChannel, UserServer } from "../../types";
-import { useAppDispatch } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import {
     deleteServerChannel,
     setServerChannels,
@@ -25,12 +25,17 @@ type ServerChannelProps = {
 
 const ServerChannels = ({ server }: ServerChannelProps) => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const channels = useAppSelector((state) => state.server.serverChannels);
+
     const { serverId, channelId } = useParams();
     const [isOpen, setIsOpen] = useState(false);
     const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
+    const [showUpdateChannelModal, setShowUpdateChannelModal] = useState(false);
     const [showDeleteServerModal, setShowDeleteServerModal] = useState(false);
-    const [channels, setChannels] = useState<ServerChannel[]>([]);
     const [channelToDelete, setChannelToDelete] =
+        useState<ServerChannel | null>(null);
+    const [selectedChannel, setSelectedChannel] =
         useState<ServerChannel | null>(null);
 
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -40,8 +45,13 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         setIsOpen((prev) => !prev);
     };
 
-    const onCloseChannelModalHandler = () => {
+    const onCloseCreateChannelModalHandler = () => {
         setShowCreateChannelModal(false);
+        setIsOpen(false);
+    };
+
+    const onCloseUpdateChannelModalHandler = () => {
+        setShowUpdateChannelModal(false);
         setIsOpen(false);
     };
 
@@ -55,16 +65,18 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         dialogRef.current?.showModal();
     };
 
+    const handleUpdateClick = (channel: ServerChannel) => {
+        setSelectedChannel(channel);
+        setShowUpdateChannelModal(true);
+    };
+
     const onDeleteHandler = async (channelId: number) => {
         try {
             await deleteChannel(channelId);
             dispatch(deleteServerChannel(channelId));
 
-            setChannels((prev) =>
-                prev.filter((channel) => channel.id !== channelId)
-            );
-
             setChannelToDelete(null);
+            navigate(`/channels/${serverId}`);
             dialogRef.current?.close();
         } catch (error) {
             console.error("Failed to delete message:", error);
@@ -96,7 +108,6 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
         const fetchChannels = async () => {
             if (!serverId) return;
             const data = await getServerChannels(+serverId);
-            setChannels(data.serverChannels);
             dispatch(setServerChannels(data.serverChannels));
         };
 
@@ -178,9 +189,8 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                             const isSelected = +channelId! === channel.id;
 
                             return (
-                                <>
+                                <div key={channel.id}>
                                     <Link
-                                        key={channel.id}
                                         to={`${channel.id}`}
                                         className={`${classes.channelName} ${
                                             isSelected ? classes.selected : ""
@@ -188,7 +198,12 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                                     >
                                         <p>{channel.name}</p>
                                         <div className={classes.buttonsWrapper}>
-                                            <div className={classes.editButton}>
+                                            <div
+                                                className={classes.editButton}
+                                                onClick={() =>
+                                                    handleUpdateClick(channel)
+                                                }
+                                            >
                                                 <FaPen />
                                             </div>
                                             <div
@@ -201,7 +216,7 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                                             </div>
                                         </div>
                                     </Link>
-                                </>
+                                </div>
                             );
                         })}
                     </div>
@@ -242,7 +257,18 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
             </div>
 
             {showCreateChannelModal && (
-                <CreateChannelModal onClose={onCloseChannelModalHandler} />
+                <CreateChannelModal
+                    onClose={onCloseCreateChannelModalHandler}
+                    labelText="Create Channel"
+                    channel={null}
+                />
+            )}
+            {showUpdateChannelModal && (
+                <CreateChannelModal
+                    onClose={onCloseUpdateChannelModalHandler}
+                    labelText="Update Channel"
+                    channel={selectedChannel}
+                />
             )}
             {showDeleteServerModal && (
                 <DeleteServerModal

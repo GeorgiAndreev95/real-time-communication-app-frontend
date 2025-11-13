@@ -28,7 +28,7 @@ export const createChannel = async (name: string, serverId: string) => {
     }
 };
 
-export const updateChannel = async (channelId: string, name: string) => {
+export const updateChannel = async (channelId: number, name: string) => {
     try {
         const { data } = await axiosInstance.put(
             `server/channel/${channelId}`,

@@ -26,6 +26,16 @@ export const serverSlice = createSlice({
                 (s) => s.serverId !== action.payload
             );
         },
+        updateServerChannel: (state, action) => {
+            const updatedChannel = action.payload;
+            const index = state.serverChannels.findIndex(
+                (channel) => channel.id === updatedChannel.id
+            );
+
+            if (index !== -1) {
+                state.serverChannels[index] = updatedChannel;
+            }
+        },
         deleteServerChannel: (state, action) => {
             state.serverChannels = state.serverChannels.filter(
                 (channel) => channel.id !== action.payload
@@ -38,6 +48,7 @@ export const {
     setUserServers,
     setServerChannels,
     removeUserServer,
+    updateServerChannel,
     deleteServerChannel,
 } = serverSlice.actions;
 

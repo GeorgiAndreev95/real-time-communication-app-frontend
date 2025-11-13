@@ -1,21 +1,46 @@
 import { useState } from "react";
-
-import { createChannel } from "../../services/channelService";
-import classes from "./CreateChannelModal.module.css";
 import { useParams } from "react-router";
 
-const CreateChannelModal = ({ onClose }: { onClose: () => void }) => {
+import type { ServerChannel } from "../../types";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { updateServerChannel } from "../../slices/serverSlice";
+import { createChannel, updateChannel } from "../../services/channelService";
+import classes from "./CreateChannelModal.module.css";
+
+type ChannelModalProps = {
+    onClose: () => void;
+    labelText: string;
+    channel: ServerChannel | null;
+};
+
+const CreateChannelModal = ({
+    onClose,
+    labelText,
+    channel,
+}: ChannelModalProps) => {
+    const dispatch = useAppDispatch();
     const { serverId } = useParams();
     const [name, setName] = useState("");
+
+    const isCreating = labelText === "Create Channel";
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        try {
-            const { data } = await createChannel(name, serverId!);
-            console.log(data);
-        } catch (error) {
-            console.error("Error creating server:", error);
+        if (isCreating) {
+            try {
+                const { data } = await createChannel(name, serverId!);
+                console.log(data);
+            } catch (error) {
+                console.error("Error creating server:", error);
+            }
+        } else {
+            try {
+                const data = await updateChannel(channel!.id, name);
+                dispatch(updateServerChannel(data.channel));
+            } catch (error) {
+                console.error("Error updating server:", error);
+            }
         }
 
         console.log("Creating server:", { name });
@@ -26,7 +51,7 @@ const CreateChannelModal = ({ onClose }: { onClose: () => void }) => {
         <div className={classes.modalOverlay} onClick={onClose}>
             <div className={classes.modal} onClick={(e) => e.stopPropagation()}>
                 <div className={classes.textWrapper}>
-                    <h2>Create Channel</h2>
+                    <h2>{labelText}</h2>
                 </div>
 
                 <form onSubmit={handleSubmit} className={classes.formWrapper}>
@@ -37,6 +62,7 @@ const CreateChannelModal = ({ onClose }: { onClose: () => void }) => {
                             name="name"
                             autoComplete="off"
                             value={name}
+                            placeholder={channel?.name}
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
@@ -56,7 +82,7 @@ const CreateChannelModal = ({ onClose }: { onClose: () => void }) => {
                                 name.length === 0 ? classes.disabled : ""
                             }`}
                         >
-                            Create Channel
+                            {labelText}
                         </button>
                     </div>
                 </form>
