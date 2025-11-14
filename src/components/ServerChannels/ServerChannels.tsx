@@ -15,20 +15,29 @@ import {
     deleteChannel,
     getServerChannels,
 } from "../../services/channelService";
-import classes from "./ServerChannels.module.css";
 import CreateChannelModal from "../Modals/CreateChannelModal";
 import DeleteServerModal from "../Modals/DeleteServerModalt";
+import classes from "./ServerChannels.module.css";
 
 type ServerChannelProps = {
     server: UserServer;
 };
 
 const ServerChannels = ({ server }: ServerChannelProps) => {
+    const { serverId, channelId } = useParams();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const channels = useAppSelector((state) => state.server.serverChannels);
+    const userServers: UserServer[] = useAppSelector(
+        (state) => state.server.userServers
+    );
+    const selectedServer = userServers?.find(
+        (server) => server.serverId === +serverId!
+    );
+    const userRole = selectedServer?.roleId;
+    const isOwner = userRole === 1;
+    const canEdit = userRole === 1 || userRole === 2;
 
-    const { serverId, channelId } = useParams();
     const [isOpen, setIsOpen] = useState(false);
     const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
     const [showUpdateChannelModal, setShowUpdateChannelModal] = useState(false);
@@ -156,30 +165,42 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                                         ease: "backOut",
                                     }}
                                 >
-                                    <div
-                                        className={classes.dropdownBtn}
-                                        onClick={() =>
-                                            setShowCreateChannelModal(true)
-                                        }
-                                    >
-                                        <p>Create Channel</p>
-                                        <FaCirclePlus
-                                            className={
-                                                classes.createChannelIcon
-                                            }
-                                        />
-                                    </div>
-                                    <div
-                                        className={classes.dropdownDeleteBtn}
-                                        onClick={() =>
-                                            setShowDeleteServerModal(true)
-                                        }
-                                    >
-                                        <p>Delete Server</p>
-                                        <FaTrashCan
-                                            className={classes.deleteServerIcon}
-                                        />
-                                    </div>
+                                    {isOwner && (
+                                        <>
+                                            <div
+                                                className={classes.dropdownBtn}
+                                                onClick={() =>
+                                                    setShowCreateChannelModal(
+                                                        true
+                                                    )
+                                                }
+                                            >
+                                                <p>Create Channel</p>
+                                                <FaCirclePlus
+                                                    className={
+                                                        classes.createChannelIcon
+                                                    }
+                                                />
+                                            </div>
+                                            <div
+                                                className={
+                                                    classes.dropdownDeleteBtn
+                                                }
+                                                onClick={() =>
+                                                    setShowDeleteServerModal(
+                                                        true
+                                                    )
+                                                }
+                                            >
+                                                <p>Delete Server</p>
+                                                <FaTrashCan
+                                                    className={
+                                                        classes.deleteServerIcon
+                                                    }
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                 </motion.div>
                             </div>
                         )}
@@ -197,24 +218,38 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
                                         }`}
                                     >
                                         <p>{channel.name}</p>
-                                        <div className={classes.buttonsWrapper}>
+                                        {canEdit && (
                                             <div
-                                                className={classes.editButton}
-                                                onClick={() =>
-                                                    handleUpdateClick(channel)
+                                                className={
+                                                    classes.buttonsWrapper
                                                 }
                                             >
-                                                <FaPen />
+                                                <div
+                                                    className={
+                                                        classes.editButton
+                                                    }
+                                                    onClick={() =>
+                                                        handleUpdateClick(
+                                                            channel
+                                                        )
+                                                    }
+                                                >
+                                                    <FaPen />
+                                                </div>
+                                                <div
+                                                    className={
+                                                        classes.deleteButton
+                                                    }
+                                                    onClick={() =>
+                                                        handleDeleteClick(
+                                                            channel
+                                                        )
+                                                    }
+                                                >
+                                                    <FaTrashCan />
+                                                </div>
                                             </div>
-                                            <div
-                                                className={classes.deleteButton}
-                                                onClick={() =>
-                                                    handleDeleteClick(channel)
-                                                }
-                                            >
-                                                <FaTrashCan />
-                                            </div>
-                                        </div>
+                                        )}
                                     </Link>
                                 </div>
                             );
