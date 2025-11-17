@@ -13,21 +13,90 @@
     height: 100%;
     width: 100%;
     margin-top: 20px;
-    border-top: 1px solid #222225;
+    border-top: 1px solid #29292d;
 }
 
 .channelHeader {
     display: flex;
     align-items: center;
+    gap: 20px;
     height: 50px;
-    border-bottom: 1px solid #202225;
+    border-bottom: 1px solid #29292d;
     font-weight: 600;
+    padding: 0 20px;
 }
 
 .channelTitle {
     font-size: 16px;
     font-weight: 400;
-    padding: 16px 20px;
+    padding: 16px 0;
+}
+
+.memberListIcon {
+    position: relative;
+    color: #94959c;
+    padding: 8px;
+    scale: 1.5;
+}
+
+.memberListIcon:hover {
+    color: var(--icon-color);
+    cursor: pointer;
+}
+
+.tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--tooltip-background);
+    color: white;
+    padding: 4px 8px;
+    min-height: 20px;
+    max-width: 200px;
+    border: 1px solid var(--tooltip-border);
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    font-size: 10px;
+    font-weight: 350;
+    z-index: 10;
+}
+
+.tooltip::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -5px;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background-color: inherit;
+    border-left: 1px solid var(--tooltip-border);
+    border-top: 1px solid var(--tooltip-border);
+}
+
+.memberListIcon:hover .tooltip {
+    opacity: 1;
+    animation: popUp 0.2s ease-in-out;
+}
+
+.messagesContainerWrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.messageContainerMain {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 .messagesContainer {
@@ -38,6 +107,40 @@
     padding: 16px 0;
     overflow-y: scroll;
     scrollbar-width: none;
+}
+
+.memberList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    min-width: 265px;
+    padding: 16px;
+    border-left: 1px solid #29292d;
+}
+
+.memberGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.memberGroup > p,
+.memberWrapper > p {
+    color: #82838b;
+}
+
+.memberWrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.memberIcon {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: gray;
 }
 
 .message {
@@ -304,5 +407,17 @@ dialog:focus,
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes popUp {
+    0% {
+        scale: 1;
+    }
+    50% {
+        scale: 1.05;
+    }
+    100% {
+        scale: 1;
     }
 }

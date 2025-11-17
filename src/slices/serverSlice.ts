@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { ServerChannel, UserServer } from "../types";
+import type { ServerChannel, ServerMember, UserServer } from "../types";
 
 type ServerState = {
     userServers: UserServer[];
     serverChannels: ServerChannel[];
+    serverMembers: ServerMember[];
 };
 
 const initialState: ServerState = {
     userServers: [],
     serverChannels: [],
+    serverMembers: [],
 };
 
 export const serverSlice = createSlice({
@@ -20,6 +22,9 @@ export const serverSlice = createSlice({
         },
         setServerChannels: (state, action) => {
             state.serverChannels = action.payload;
+        },
+        setServerMembers: (state, action) => {
+            state.serverMembers = action.payload;
         },
         removeUserServer: (state, action) => {
             state.userServers = state.userServers.filter(
@@ -47,6 +52,7 @@ export const serverSlice = createSlice({
 export const {
     setUserServers,
     setServerChannels,
+    setServerMembers,
     removeUserServer,
     updateServerChannel,
     deleteServerChannel,

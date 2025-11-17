@@ -12,6 +12,7 @@ export type UserServer = {
             id: number;
             name: string;
         }[];
+        memberships: ServerMember[];
         preferences?: {
             lastChannelId: number;
             lastChannel: {
@@ -26,6 +27,15 @@ export type ServerChannel = {
     id: number;
     name: string;
     serverId: number;
+};
+
+export type ServerMember = {
+    roleId: number;
+    user: {
+        id: number;
+        username: string;
+        profilePicture: string;
+    };
 };
 
 export type Sender = {

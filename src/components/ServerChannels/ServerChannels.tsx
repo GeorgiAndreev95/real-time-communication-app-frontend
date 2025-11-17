@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import {
     deleteServerChannel,
     setServerChannels,
+    setServerMembers,
 } from "../../slices/serverSlice";
 import {
     deleteChannel,
@@ -118,10 +119,16 @@ const ServerChannels = ({ server }: ServerChannelProps) => {
             if (!serverId) return;
             const data = await getServerChannels(+serverId);
             dispatch(setServerChannels(data.serverChannels));
+            dispatch(setServerMembers(server?.server.memberships));
         };
 
         fetchChannels();
-    }, [dispatch, serverId, showCreateChannelModal]);
+    }, [
+        dispatch,
+        server?.server.memberships,
+        serverId,
+        showCreateChannelModal,
+    ]);
 
     return (
         <>

@@ -2,8 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 
 import { FaTrashCan, FaPen } from "react-icons/fa6";
+import { MdPeopleAlt } from "react-icons/md";
 
-import type { Message, ServerChannel, UserServer } from "../../types";
+import type {
+    Message,
+    ServerChannel,
+    ServerMember,
+    UserServer,
+} from "../../types";
 import {
     createMessage,
     getMessages,
@@ -23,6 +29,7 @@ const Channel = () => {
     const { serverId, channelId } = useParams();
 
     const [content, setContent] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
     const [messageToDelete, setMessageToDelete] = useState<Message | null>(
         null
     );
@@ -38,6 +45,13 @@ const Channel = () => {
     const channels: ServerChannel[] = useAppSelector(
         (state) => state.server.serverChannels
     );
+    const serverMembers: ServerMember[] = useAppSelector(
+        (state) => state.server.serverMembers
+    );
+
+    const owner = serverMembers?.filter((member) => member.roleId === 1)[0];
+    const admins = serverMembers?.filter((member) => member.roleId === 2);
+    const members = serverMembers?.filter((member) => member.roleId === 3);
 
     const selectedServer = userServers?.find(
         (server) => server.serverId === +channelId!
@@ -96,6 +110,10 @@ const Channel = () => {
                 textarea.style.overflowY = "hidden";
             }
         }
+    };
+
+    const handleMemberListClick = () => {
+        setIsOpen((prev) => !prev);
     };
 
     const handleDeleteClick = (message: Message) => {
@@ -161,154 +179,257 @@ const Channel = () => {
                     <h3 className={classes.channelTitle}>
                         {selectedChannel?.name}
                     </h3>
+                    <div
+                        className={classes.memberListIcon}
+                        onClick={handleMemberListClick}
+                    >
+                        <MdPeopleAlt />
+                        <span className={classes.tooltip}>
+                            {isOpen ? "Hide Member List" : "Show Member List"}
+                        </span>
+                    </div>
                 </div>
-                <div className={classes.messagesContainer}>
-                    {groupMessages(messages).map((group, groupIndex) => {
-                        const firstMsg = group.messages[0];
-                        const restMsgs = group.messages.slice(1);
-                        date = new Date(
-                            group.messages[0].createdAt
-                        ).toLocaleString("en-GB", {
-                            year: "2-digit",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                        });
 
-                        return (
-                            <div
-                                key={groupIndex}
-                                className={classes.messageGroup}
-                            >
-                                <div className={classes.messageHeader}>
-                                    <img
-                                        className={classes.profilePicture}
-                                        src={`http://localhost:3000${group.sender.profilePicture}`}
-                                        alt={group.sender.username}
-                                    />
-                                    <div className={classes.contentWrapper}>
-                                        <div
-                                            className={classes.usernameAndDate}
-                                        >
-                                            <div className={classes.username}>
-                                                {group.sender.username}
-                                            </div>
-                                            <div className={classes.date}>
-                                                {date}
-                                            </div>
-                                        </div>
-                                        <div className={classes.content}>
-                                            <p>{firstMsg.content}</p>
-                                            {(firstMsg.sender.id ===
-                                                currentUserId ||
-                                                canEdit) && (
-                                                <div
-                                                    className={
-                                                        classes.buttonsWrapper
-                                                    }
-                                                >
-                                                    <div
-                                                        className={
-                                                            classes.editButton
-                                                        }
-                                                    >
-                                                        <FaPen />
-                                                    </div>
-                                                    <div
-                                                        className={
-                                                            classes.deleteButton
-                                                        }
-                                                        onClick={() =>
-                                                            handleDeleteClick(
-                                                                firstMsg
-                                                            )
-                                                        }
-                                                    >
-                                                        <FaTrashCan />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {restMsgs.map((msg) => {
-                                    const timePosted = new Date(
-                                        msg.createdAt
+                <div className={classes.messagesContainerWrapper}>
+                    <div className={classes.messageContainerMain}>
+                        <div className={classes.messagesContainer}>
+                            {groupMessages(messages).map(
+                                (group, groupIndex) => {
+                                    const firstMsg = group.messages[0];
+                                    const restMsgs = group.messages.slice(1);
+                                    date = new Date(
+                                        group.messages[0].createdAt
                                     ).toLocaleString("en-GB", {
+                                        year: "2-digit",
+                                        month: "2-digit",
+                                        day: "2-digit",
                                         hour: "2-digit",
                                         minute: "2-digit",
+                                        second: "2-digit",
                                     });
 
                                     return (
                                         <div
-                                            className={classes.singleMessage}
-                                            key={msg.id}
+                                            key={groupIndex}
+                                            className={classes.messageGroup}
                                         >
-                                            <span
-                                                className={`${classes.date} ${classes.hoverTime}`}
-                                            >
-                                                {timePosted}
-                                            </span>
                                             <div
                                                 className={
-                                                    classes.groupedContent
+                                                    classes.messageHeader
                                                 }
                                             >
-                                                <p key={msg.id}>
-                                                    {msg.content}
-                                                </p>
-                                                {msg.sender.id ===
-                                                    currentUserId && (
+                                                <img
+                                                    className={
+                                                        classes.profilePicture
+                                                    }
+                                                    src={`http://localhost:3000${group.sender.profilePicture}`}
+                                                    alt={group.sender.username}
+                                                />
+                                                <div
+                                                    className={
+                                                        classes.contentWrapper
+                                                    }
+                                                >
                                                     <div
                                                         className={
-                                                            classes.buttonsWrapper
+                                                            classes.usernameAndDate
                                                         }
                                                     >
                                                         <div
                                                             className={
-                                                                classes.editButton
+                                                                classes.username
                                                             }
                                                         >
-                                                            <FaPen />
+                                                            {
+                                                                group.sender
+                                                                    .username
+                                                            }
                                                         </div>
                                                         <div
                                                             className={
-                                                                classes.deleteButton
-                                                            }
-                                                            onClick={() =>
-                                                                handleDeleteClick(
-                                                                    msg
-                                                                )
+                                                                classes.date
                                                             }
                                                         >
-                                                            <FaTrashCan />
+                                                            {date}
                                                         </div>
                                                     </div>
-                                                )}
+                                                    <div
+                                                        className={
+                                                            classes.content
+                                                        }
+                                                    >
+                                                        <p>
+                                                            {firstMsg.content}
+                                                        </p>
+                                                        {(firstMsg.sender.id ===
+                                                            currentUserId ||
+                                                            canEdit) && (
+                                                            <div
+                                                                className={
+                                                                    classes.buttonsWrapper
+                                                                }
+                                                            >
+                                                                <div
+                                                                    className={
+                                                                        classes.editButton
+                                                                    }
+                                                                >
+                                                                    <FaPen />
+                                                                </div>
+                                                                <div
+                                                                    className={
+                                                                        classes.deleteButton
+                                                                    }
+                                                                    onClick={() =>
+                                                                        handleDeleteClick(
+                                                                            firstMsg
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <FaTrashCan />
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
+
+                                            {restMsgs.map((msg) => {
+                                                const timePosted = new Date(
+                                                    msg.createdAt
+                                                ).toLocaleString("en-GB", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                });
+
+                                                return (
+                                                    <div
+                                                        className={
+                                                            classes.singleMessage
+                                                        }
+                                                        key={msg.id}
+                                                    >
+                                                        <span
+                                                            className={`${classes.date} ${classes.hoverTime}`}
+                                                        >
+                                                            {timePosted}
+                                                        </span>
+                                                        <div
+                                                            className={
+                                                                classes.groupedContent
+                                                            }
+                                                        >
+                                                            <p key={msg.id}>
+                                                                {msg.content}
+                                                            </p>
+                                                            {msg.sender.id ===
+                                                                currentUserId && (
+                                                                <div
+                                                                    className={
+                                                                        classes.buttonsWrapper
+                                                                    }
+                                                                >
+                                                                    <div
+                                                                        className={
+                                                                            classes.editButton
+                                                                        }
+                                                                    >
+                                                                        <FaPen />
+                                                                    </div>
+                                                                    <div
+                                                                        className={
+                                                                            classes.deleteButton
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleDeleteClick(
+                                                                                msg
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <FaTrashCan />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     );
-                                })}
-                            </div>
-                        );
-                    })}
-                </div>
+                                }
+                            )}
+                        </div>
 
-                <form className={classes.inputForm} onSubmit={onSubmitHandler}>
-                    <input
-                        className={classes.inputField}
-                        name="content"
-                        required
-                        placeholder={`Message #${selectedChannel?.name}`}
-                        value={content}
-                        onChange={onInputChange}
-                        ref={textareaRef}
-                        autoComplete="off"
-                    />
-                </form>
+                        <form
+                            className={classes.inputForm}
+                            onSubmit={onSubmitHandler}
+                        >
+                            <input
+                                className={classes.inputField}
+                                name="content"
+                                required
+                                placeholder={`Message #${selectedChannel?.name}`}
+                                value={content}
+                                onChange={onInputChange}
+                                ref={textareaRef}
+                                autoComplete="off"
+                            />
+                        </form>
+                    </div>
+                    {isOpen && (
+                        <div className={classes.memberList}>
+                            <div className={classes.memberGroup}>
+                                <p>Owner - 1</p>
+                                <div className={classes.memberWrapper}>
+                                    <img
+                                        src={`http://localhost:3000${owner.user.profilePicture}`}
+                                        alt="User profile picture"
+                                        className={classes.memberIcon}
+                                    />
+                                    <p>{owner.user.username}</p>
+                                </div>
+                            </div>
+
+                            {admins.length > 0 && (
+                                <div className={classes.memberGroup}>
+                                    <p>Admins - {admins.length}</p>
+                                    {admins.map((admin) => (
+                                        <div
+                                            key={admin.user.id}
+                                            className={classes.memberWrapper}
+                                        >
+                                            <img
+                                                src={`http://localhost:3000${admin.user.profilePicture}`}
+                                                alt="User profile picture"
+                                                className={classes.memberIcon}
+                                            />
+                                            <p>{admin.user.username}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {members.length > 0 && (
+                                <div className={classes.memberGroup}>
+                                    <p>Members - {members.length}</p>
+                                    {members.map((member) => (
+                                        <div
+                                            key={member.user.id}
+                                            className={classes.memberWrapper}
+                                        >
+                                            <img
+                                                src={`http://localhost:3000${member.user.profilePicture}`}
+                                                alt="User profile picture"
+                                                className={classes.memberIcon}
+                                            />
+                                            <p>{member.user.username}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 <dialog ref={dialogRef}>
                     <div className={classes.dialogText}>

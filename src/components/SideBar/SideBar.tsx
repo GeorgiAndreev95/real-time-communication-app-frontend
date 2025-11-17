@@ -24,14 +24,11 @@ const SideBar = ({ onOpenModal, modalState }: SideBarProps) => {
     const userServers = useAppSelector((state) => state.server.userServers);
     const { serverId } = useParams<{ serverId: string }>();
 
-    console.log(userServers);
-
     useEffect(() => {
         const fetchUserServers = async () => {
             try {
                 const data = await getUserServers();
                 dispatch(setUserServers(data.userServers));
-                console.log(data.userServers);
             } catch (error) {
                 console.error("Error fetching servers:", error);
             }

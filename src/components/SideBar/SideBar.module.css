@@ -12,14 +12,12 @@
     flex-direction: column;
     gap: 8px;
     min-width: 72px;
-    /* height: 100vh; */
 }
 
 .userServers {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    /* margin-top: 20px; */
 }
 
 .userServer {
